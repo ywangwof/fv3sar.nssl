@@ -1,0 +1,84 @@
+#!/bin/sh -l
+#PBS -A hpc-wof1
+#PBS -l partition=xjet:sjet:vjet
+#PBS -l nodes=NNNNNN:ppn=PPPPPP
+#PBS -l walltime=01:30:00
+#PBS -N fv3sar
+#PBS -o WWWDDD/fv3sar_${PBS_JOBID}.out
+#PBS -e WWWDDD/fv3sar_${PBS_JOBID}.err
+#PBS -d .
+
+time1=$(date '+%s')
+echo "Job Started: $(date). Job Id:  $PBS_JOBID"
+echo " "
+
+#-----------------------------------------------------------------------
+#
+# Load modules.
+#
+#-----------------------------------------------------------------------
+#
+
+module purge
+module load intel/18.0.5.274
+module load impi/2018.4.274
+module load szip/2.1
+module load hdf5/1.8.9
+module load netcdf/4.2.1.1
+module load hdf4
+
+#export APRUN="mpirun -l -np $PBS_NP"
+export APRUN=""
+
+UPPEXE=EEEEEE
+
+#-----------------------------------------------------------------------
+#
+# Get the cycle hour.  This is just the variable HH set in the setup.sh
+# script.
+#
+#-----------------------------------------------------------------------
+
+CDATE="DDDDDD"
+fhr="HHHHHH"
+
+cyc="00"
+tmmark="tm${cyc}"
+
+TITLE="fv3sar_$CDATE"
+
+#-----------------------------------------------------------------------
+#
+# Run the job
+#
+#-----------------------------------------------------------------------
+
+${APRUN} ${UPPEXE}/ncep_post < itag
+
+fhr2=$(printf "%02d" $fhr)
+
+mv BGDAWP.GrbF${fhr2} ../${TITLE}.t${cyc}z.bgdawp${fhr}.${tmmark}
+mv BGRD3D.GrbF${fhr2} ../${TITLE}.t${cyc}z.bgrd3d${fhr}.${tmmark}
+
+#-----------------------------------------------------------------------
+#
+# Remove work directory.
+#
+#-----------------------------------------------------------------------
+
+
+echo "Post-processing completed for fhr = $fhr hr."
+
+time2=$(date '+%s')
+
+let diff=time2-time1
+let hour=diff/3600
+let diff=diff%3600
+let min=diff/60
+let sec=diff%60
+
+echo -n "Job   Ended: $(date). "
+printf 'Job run time:  %02d:%02d:%02d' $hour $min $sec
+echo " "
+
+exit

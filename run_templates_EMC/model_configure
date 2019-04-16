@@ -1,0 +1,47 @@
+total_member:            1
+print_esmf:              .false.
+PE_MEMBER01:             NPES
+start_year:              YYYY
+start_month:             MM
+start_day:               DD
+start_hour:              00
+start_minute:            0
+start_second:            0
+nhours_fcst:             60
+RUN_CONTINUE:            .false.
+ENS_SPS:                 .false.
+dt_atmos:                40
+cpl:                     .false.
+calendar:                'julian'
+memuse_verbose:          .false.
+atmos_nthreads:          2
+use_hyper_thread:        .false.
+ncores_per_node:         24
+restart_interval:        0
+
+quilting:                .true.
+output_1st_tstep_rst:    .false.
+write_groups:            NODES2
+write_tasks_per_group:   PPN2
+num_files:               2
+filename_base:           'dyn' 'phy'
+output_file:             'netcdf'
+write_nemsioflip:        .false.
+write_fsyncflag:         .false.
+
+output_grid: 'lambert_conformal'
+cen_lon:     -97.5
+cen_lat:     38.5
+stdlat1:     38.5
+stdlat2:     38.5
+nx:          1799
+ny:          1059
+lon1:        -122.719528
+lat1:        21.138123
+dx:          3000.0
+dy:          3000.0
+
+nfhout:                  1
+nfhmax_hf:               60
+nfhout_hf:               1
+nsout:                   -1

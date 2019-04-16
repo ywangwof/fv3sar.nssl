@@ -1,0 +1,55 @@
+#!/bin/sh -l
+#PBS -A hpc-wof1
+#PBS -l partition=xjet:sjet:vjet
+#PBS -l nodes=NNNNNN:ppn=PPPPP1+MMMMMM:ppn=PPPPP2
+#PBS -l walltime=04:00:00
+#PBS -N fv3sar
+#PBS -o WWWDDD/fv3sar_${PBS_JOBID}.out
+#PBS -e WWWDDD/fv3sar_${PBS_JOBID}.err
+#PBS -d .
+
+#set -eux
+. /apps/lmod/lmod/init/sh
+
+module purge
+module load intel/18.0.5.274
+module load impi/2018.4.274
+module load szip
+module load hdf5/1.8.9
+module load netcdf4/4.2.1.1
+module load contrib anaconda
+
+module list
+
+time1=$(date '+%s')
+echo "Job Started: $(date). Job Id:  $PBS_JOBID"
+echo " "
+
+RUNDIR='WWWDDD'
+
+cd $RUNDIR
+
+export MPI_TYPE_DEPTH=20
+export OMP_STACKSIZE=512M
+export ESMF_RUNTIME_COMPLIANCECHECK=OFF:depth=4
+
+export OMP_NUM_THREADS=2
+export MKL_NUM_THREADS=2
+mpirun -prepend-rank -np $PBS_NP /bin/env "OMP_NUM_THREADS=2" "MKL_NUM_THREADS=2" "KMP_NUM_THREADS=2" EXEPPP
+
+touch done.fv3
+
+time2=$(date '+%s')
+
+let diff=time2-time1
+let hour=diff/3600
+let diff=diff%3600
+let min=diff/60
+let sec=diff%60
+
+echo -n "Job   Ended: $(date). "
+printf 'Job run time:  %02d:%02d:%02d' $hour $min $sec
+echo " "
+
+exit
+

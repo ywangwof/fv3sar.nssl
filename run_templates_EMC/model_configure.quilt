@@ -1,0 +1,25 @@
+total_member:            1
+print_esmf:              .TRUE.
+PE_MEMBER01:             NPES 
+start_year:              YYYY
+start_month:             MM
+start_day:               DD 
+start_hour:              00
+start_minute:            0
+start_second:            0
+nhours_fcst:             60 
+RUN_CONTINUE:            .false.
+ENS_SPS:                 .false.
+dt_atmos:                40 
+calendar:                'julian'
+memuse_verbose:          .false.
+atmos_nthreads:          1
+use_hyper_thread:        .false.
+ncores_per_node:         24
+restart_interval:        0
+
+quilting:                .true.
+write_groups:            1
+write_tasks_per_group:   12 
+num_files:               2
+filename_base:           'dyn' 'phy'
