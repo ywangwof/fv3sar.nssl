@@ -13,6 +13,7 @@
      dycore_only = .false.
      fdiag = 3
      ccpp_suite = 'ccpp_suite.xml'
+     avg_max_length = 3600.
 /
 
 &diag_manager_nml
@@ -145,6 +146,7 @@
        nst_anl        = .true.
        use_ufo        = .true.
        pre_rad        = .false.
+       avg_max_length = 3600.
        ncld           = 2
        imp_physics    = 8
        ltaerosol      = .F.

@@ -52,6 +52,12 @@ emc_event="${emc_dir}/fv3sar.${eventdate}/${CYCLE}"
 emcdone="donefile.${eventdate}${CYCLE}"
 
 emcurl="ftp://ftp.emc.ncep.noaa.gov/mmb/mmbpll/fv3sar/fv3sar.${eventdate}/${CYCLE}"
+files=(gfs_ctrl.nc gfs_data.tile7.nc sfc_data.tile7.nc)
+for hr in $(seq 0 3 60); do
+  fhr=$(printf "%03d" $hr)
+  files+=(gfs_bndy.tile7.${fhr}.nc)
+done
+files+=(${emcdone})
 
 if [ ! -f ${emc_event}/${emcdone} ]; then
 
@@ -68,7 +74,10 @@ if [ ! -f ${emc_event}/${emcdone} ]; then
   done
 
   rm -f ${emc_event}/${emcdone}
-  wget -m -nH --cut-dirs=3 ${emcurl} > /dev/null 2>&1
+  for fn in ${files[@]}; do
+    echo "Downloading $fn ....."
+    wget -m -nH --cut-dirs=3 ${emcurl}/$fn > /dev/null 2>&1
+  done
 fi
 
 echo " "

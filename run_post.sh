@@ -115,5 +115,4 @@ EOF
 
 done
 
-exit
 

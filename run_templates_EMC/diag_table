@@ -3,20 +3,10 @@ YYYY MM DD 00 0 0
 #output files
 "grid_spec",              -1,  "months",   1, "days",  "time"
 "atmos_static",           -1,  "hours",    1, "hours", "time"
-"atmos_sos",               1,  "hours",    1, "hours", "time"
-#"atmos_sos_ave",           1,  "hours",    1, "hours", "time"
-#NOTE: Using multiple gfs output files appears to cause OOM errors.
-# files needed for NGGPS evaluation
-"nggps3d_4xdaily",         0,  "hours",    1, "hours", "time"
-"nggps2d",                 0,  "hours",    1, "hours", "time"
-"refl3D",                  1,  "hours",    1, "hours", "time"
-"maxmin2D",                1,  "hours",    1, "hours", "time"
-#"fv3_history_%4yr%2mo%2dy%2hr", 1, "hours", 1, "hours", "time", 1, "hours"
+"atmos_4xdaily",           6,  "hours",    1, "days",  "time"
+"fv3_history",             3,  "hours",    1, "hours", "time"
+"fv3_history2d",           3,  "hours",    1, "hours", "time"
 
-#"refl2D",                  1,  "hours",    1, "hours", "time"
-#
-#output variables
-#
 #
 #=======================
 # ATMOSPHERE DIAGNOSTICS
@@ -30,96 +20,44 @@ YYYY MM DD 00 0 0
  "dynamics", "grid_latt", "grid_latt", "grid_spec", "all", .false.,  "none", 2,
  "dynamics", "area",     "area",     "grid_spec", "all", .false.,  "none", 2,
 ###
-# hourly output
+# 4x daily output
 ###
- "dynamics",  "us",          "UGRDlowest",    "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "u1000",       "UGRD1000",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "u925",        "UGRD925",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "u850",        "UGRD850",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "u700",        "UGRD700",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "u500",        "UGRD500",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "u250",        "UGRD250",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "u200",        "UGRD200",       "atmos_sos", "all", .false.,  "none", 2
-###
- "dynamics",  "vs",          "VGRDlowest",    "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "v1000",       "VGRD1000",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "v925",        "VGRD925",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "v850",        "VGRD850",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "v700",        "VGRD700",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "v500",        "VGRD500",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "v250",        "VGRD250",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "v200",        "VGRD200",       "atmos_sos", "all", .false.,  "none", 2
+ "dynamics",  "slp",         "slp",        "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "vort850",     "vort850",    "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "u1000",       "u1000",      "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "u850",        "u850",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "u700",        "u700",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "u500",        "u500",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "u200",        "u200",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "v1000",       "v1000",      "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "v850",        "v850",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "v700",        "v700",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "v500",        "v500",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "v200",        "v200",       "atmos_4xdaily", "all", .false.,  "none", 2
 ####
- "dynamics",  "tb",          "TMPlowest",    "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "tm",          "TMP500_300",   "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "t1000",       "TMP1000",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "t925",        "TMP925",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "t850",        "TMP850",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "t700",        "TMP700",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "t500",        "TMP500",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "t200",        "TMP200",       "atmos_sos", "all", .false.,  "none", 2
-#### ###NOTE: This was changed to 'z' in IPDv4
- "dynamics",  "z1000",       "HGT1000",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "z850",        "HGT850",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "z700",        "HGT700",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "z500",        "HGT500",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "z250",        "HGT250",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "z200",        "HGT200",       "atmos_sos", "all", .false.,  "none", 2
+ "dynamics",  "tm",          "tm",         "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "t1000",       "t1000",      "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "t850",        "t850",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "t700",        "t700",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "t500",        "t500",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "t200",        "t200",       "atmos_4xdaily", "all", .false.,  "none", 2
 ####
-# "dynamics",  "w1000",       "VVEL1000",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "w850",        "VVEL850",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "w700",        "VVEL700",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "w500",        "VVEL500",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "w200",        "VVEL200",       "atmos_sos", "all", .false.,  "none", 2
+ "dynamics",  "z1000",       "z1000",      "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "z850",        "z850",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "z700",        "z700",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "z500",        "z500",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "z200",        "z200",       "atmos_4xdaily", "all", .false.,  "none", 2
 ####
- "dynamics",  "q1000",       "Q1000",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "q925",        "Q925",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "q850",        "Q850",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "q700",        "Q700",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "q500",        "Q500",       "atmos_sos", "all", .false.,  "none", 2
+#"dynamics",  "w1000",       "w1000",      "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "w850",        "w850",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "w700",        "w700",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "w500",        "w500",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "w200",        "w200",       "atmos_4xdaily", "all", .false.,  "none", 2
 ####
- "dynamics",  "dp1000",       "DPT1000",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "dp925",        "DPT925",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "dp850",        "DPT850",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "dp700",        "DPT700",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "dp500",        "DPT500",       "atmos_sos", "all", .false.,  "none", 2
-###
- "dynamics",  "rh1000",       "RH1000",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "rh925",        "RH925",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "rh850",        "RH850",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "rh700",        "RH700",       "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "rh500",        "RH500",       "atmos_sos", "all", .false.,  "none", 2
-# "dynamics",  "rh300",        "RH300",       "atmos_sos", "all", .false.,  "none", 2
-# "dynamics",  "rh200",        "RH200",       "atmos_sos", "all", .false.,  "none", 2
-####
- "dynamics",  "slp",         "PRMSL",      "atmos_sos", "all", .false.,  "none", 2
- "dynamics",  "tq",          "PWAT",        "atmos_sos", "all", .false., "none", 2
- "dynamics",  "lw",          "VIL",         "atmos_sos", "all", .false., "none", 2
- "dynamics",  "iw",          "iw",          "atmos_sos", "all", .false., "none", 2
- "dynamics",  "ps",          "PRESsfc",     "atmos_sos", "all", .false., "none", 2
-# "dynamics",  "srh",         "HLCY0_3km",    "atmos_sos", "all", .false., "none", 2
- "dynamics",  "srh01",       "HLCY0_1km",    "atmos_sos", "all", .false., "none", 2
- "dynamics",  "srh03",       "HLCY0_3km",    "atmos_sos", "all", .false., "none", 2
- "dynamics",  "srh25",       "HLCY2_5km",    "atmos_sos", "all", .false., "none", 2
-# "dynamics",  "ushr06",      "ushr06",      "atmos_sos", "all", .false., "none", 2
-# "dynamics",  "vshr06",      "vshr06",      "atmos_sos", "all", .false., "none", 2
-# "dynamics",  "ushr01",      "ushr01",      "atmos_sos", "all", .false., "none", 2
-# "dynamics",  "vshr01",      "vshr01",      "atmos_sos", "all", .false., "none", 2
- "dynamics",  "w100m",       "VVEL100m",     "atmos_sos", "all", .false., "none", 2
- "dynamics",  "w2500m",      "VVEL2500m",    "atmos_sos", "all", .false., "none", 2
- "dynamics",  "w5km",        "VVEL5km",      "atmos_sos", "all", .false., "none", 2
- "dynamics", "max_reflectivity",  "REFC",    "atmos_sos","all",.false., "none", 2
- "dynamics", "base_reflectivity", "REFD1km", "atmos_sos","all",.false., "none", 2
- "dynamics", "4km_reflectivity",  "REFD4km", "atmos_sos","all",.false., "none", 2
- "dynamics", "m10C_reflectivity","REFDm10C", "atmos_sos","all",.false., "none", 2
- "dynamics",  "echo_top",    "RETOP",        "atmos_sos", "all",.false., "none", 2
- "dynamics",  "ctp",         "PRESctp",      "atmos_sos", "all", .false., "none", 2
- "dynamics",  "ctz" ,        "HGTctp",       "atmos_sos", "all", .false., "none", 2
- "dynamics",  "cape",        "CAPEsfc",      "atmos_sos", "all", .false., "none", 2
- "dynamics",  "cin",         "CINsfc",       "atmos_sos", "all", .false., "none", 2
- "dynamics",  "ustm",        "USTM",         "atmos_sos", "all", .false., "none", 2
- "dynamics",  "vstm",        "VSTM",         "atmos_sos", "all", .false., "none", 2
-
+ "dynamics",  "q1000",       "q1000",      "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "q850",        "q850",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "q700",        "q700",       "atmos_4xdaily", "all", .false.,  "none", 2
+ "dynamics",  "q500",        "q500",       "atmos_4xdaily", "all", .false.,  "none", 2
 ###
 # gfs static data
 ###
@@ -128,100 +66,66 @@ YYYY MM DD 00 0 0
  "dynamics",      "hyam",        "hyam",         "atmos_static",      "all", .false.,  "none", 2
  "dynamics",      "hybm",        "hybm",         "atmos_static",      "all", .false.,  "none", 2
  "dynamics",      "zsurf",       "zsurf",        "atmos_static",      "all", .false.,  "none", 2
-
-#############################################################################################
 ###
 # FV3 variabls needed for NGGPS evaluation
 ###
- "gfs_dyn",  "ucomp",       "ucomp",      "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "vcomp",       "vcomp",      "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "temp",        "temp",       "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "delp",        "delp",       "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "sphum",       "sphum",      "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "o3mr",        "o3mr",       "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "liq_wat",     "clwmr",      "nggps3d_4xdaily",  "all",  .false.,  "none",  2
-# "gfs_dyn",  "pfhy",        "hypres",     "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "pfnh",        "nhpres",     "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "w",           "w",          "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "delz",        "delz",       "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "rainwat",     "qr",         "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "ice_wat",     "qi",         "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "snowwat",     "qs",         "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "gfs_dyn",  "graupel",     "qg",         "nggps3d_4xdaily",  "all",  .false.,  "none",  2
- "dynamics", "reflectivity","reflectivity","refl3D",          "all",  .false.,  "none",  2
-###
-# GFS variabls needed for NGGPS evaluation
-###
-# "gfs_phys",  "ALBDOsfc"       "ALBDOsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "cnvprcp"        "CPRATsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "totprcp_ave"    "PRATEsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "DLWRF"          "DLWRFsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "ULWRF"          "ULWRFsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "DSWRF"          "DSWRFsfc"   "nggps2d",         "all",  .false.,  "none",  2
-# "gfs_phys",  "USWRFsfc"       "USWRFsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "DSWRFtoa"       "DSWRFtoa"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "USWRFtoa"       "USWRFtoa"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "ULWRFtoa"       "ULWRFtoa"   "nggps2d",         "all",  .false.,  "none",  2
-# "gfs_phys",  "gflux"          "GFLUXsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "HGTsfc"         "HGTsfc"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "hpbl"           "HPBLsfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "fice"           "ICECsfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SLMSKsfc"       "SLMSKsfc"   "nggps2d",         "all",  .false.,  "none",  2
-# "gfs_phys",  "dqsfc"          "LHTFLsfc"   "nggps2d",         "all",  .false.,  "none",  2
-# "gfs_phys",  "dtsfc"          "SHTFLsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "psurf"          "PRESsfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "pwat"           "PWATclm"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "soilm"          "SOILM"      "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SOILW1"         "SOILW1"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SOILW2"         "SOILW2"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SOILW3"         "SOILW3"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SOILW4"         "SOILW4"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "q2m"            "SPFH2m"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "tprcp"          "tprcp"      "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "TCDC_aveclm"    "TCDCclm"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "TCDC_avehcl"    "TCDChcl"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "TCDC_avelcl"    "TCDClcl"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "TCDC_avemcl"    "TCDCmcl"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SOILT1"         "SOILT1"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SOILT2"         "SOILT2"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SOILT3"         "SOILT3"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "SOILT4"         "SOILT4"     "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "t2m"            "TMP2m"      "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "dpt2m"          "DPT2m"      "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "tsfc"           "TMPsfc"     "nggps2d",         "all",  .false.,  "none",  2
-# "gfs_phys",  "dugwd"          "UGWDsfc"    "nggps2d",         "all",  .false.,  "none",  2
-# "gfs_phys",  "dvgwd"          "VGWDsfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "dusfc"          "UFLXsfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "dvsfc"          "VFLXsfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "u10m"           "UGRD10m"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "v10m"           "VGRD10m"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "wind10mmax"     "wind10mmax" "nggps2d",         "all",  .false.,  "none",  2
- "gfs_phys",  "refl_10cm",     "refl_10cm", "nggps3d_4xdaily", "all",  .false.,  "none",  2
-# "gfs_phys",  "refl_10cm",     "refl_10cm", "fv3_history_%4yr%2mo%2dy%2hr", "all", .false., "none",  2
- "gfs_sfc",   "weasd"          "WEASDsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "snowd"          "SNODsfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "ZORLsfc"        "ZORLsfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "VFRACsfc"       "VFRACsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "f10m"           "F10Msfc"    "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "vtype"          "VTYPEsfc"   "nggps2d",         "all",  .false.,  "none",  2
- "gfs_sfc",   "stype"          "STYPEsfc"   "nggps2d",         "all",  .false.,  "none",  2
-#Max/Min must be kept in separate files.  Time is controlled by diag_table
- "dynamics",  "uh03",             "MXUPHL0_3km",     "maxmin2D", "all", max, "none", 2
- "dynamics",  "uh25",             "MXUPHL2_5km",     "maxmin2D", "all", max, "none", 2
- "dynamics",  "uh03",             "MNUPHL0_3km",     "maxmin2D", "all", min, "none", 2
- "dynamics",  "uh25",             "MNUPHL2_5km",     "maxmin2D", "all", min, "none", 2
- "dynamics", "max_reflectivity",  "MAXREFC",         "maxmin2D", "all", max, "none", 2
- "dynamics", "base_reflectivity", "MAXREF_1km",      "maxmin2D", "all", max, "none", 2
- "dynamics",  "wmaxup",           "MAXUVV",          "maxmin2D", "all", max, "none", 2
- "dynamics",  "wmaxdn",           "MAXDVV",          "maxmin2D", "all", min, "none", 2
-#2D reflectivity fields must be in seperate files because module is 'dynamics'  Time is
-#controlled by diag_table
-# "dynamics", "max_reflectivity",  "REFC",    "refl2D","all",.false., "none", 2
-# "dynamics", "base_reflectivity", "REFD1km", "refl2D","all",.false., "none", 2
-# "dynamics", "4km_reflectivity",  "REFD4km", "refl2D","all",.false., "none", 2
-# "dynamics", "m10C_reflectivity","REFDm10C", "refl2D","all",.false., "none", 2
-# "dynamics",  "echo_top",    "RETOP",        "refl2D", "all",.false., "none", 2
-#
+"gfs_dyn",     "ucomp",       "ugrd",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "vcomp",       "vgrd",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "sphum",       "spfh",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "temp",        "tmp",       "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "liq_wat",     "clwmr",     "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "o3mr",        "o3mr",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "delp",        "dpres",     "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "delz",        "delz",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "w",           "dzdt",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "ice_wat",     "icmr",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "rainwat",     "rwmr",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "snowwat",     "snmr",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "graupel",     "grle",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "ps",          "pressfc",   "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "hs",          "hgtsfc",    "fv3_history",    "all",  .false.,  "none",  2
+"gfs_phys",    "refl_10cm"    "refl_10cm"  "fv3_history",         "all",  .false.,  "none",  2
+"gfs_dyn",     "ice_nc",      "nicp",      "fv3_history",  "all",  .false.,  "none",  2
+"gfs_dyn",     "rain_nc",     "ntrnc",     "fv3_history",  "all",  .false.,  "none",  2
+
+"gfs_dyn",   "wmaxup",        "upvvelmax",   "fv3_history",           "all",  .false.,  "none", 2
+"gfs_dyn",   "wmaxdn",        "dnvvelmax",   "fv3_history",           "all",  .false.,  "none", 2
+"gfs_dyn",   "uhmax03",       "uhmax03",     "fv3_history",           "all",  .false.,  "none", 2
+"gfs_dyn",   "uhmax25",       "uhmax25",     "fv3_history",           "all",  .false.,  "none", 2
+"gfs_dyn",   "uhmin03",       "uhmin03",     "fv3_history",           "all",  .false.,  "none", 2
+"gfs_dyn",   "uhmin25",       "uhmin25",     "fv3_history",           "all",  .false.,  "none", 2
+"gfs_dyn",   "maxvort01",     "maxvort01",   "fv3_history",           "all",  .false.,  "none", 2
+"gfs_dyn",   "maxvort02",     "maxvort02",   "fv3_history",           "all",  .false.,  "none", 2
+"gfs_dyn",   "maxvorthy1",    "maxvorthy1",  "fv3_history",           "all",  .false.,  "none", 2
+"gfs_phys",  "ALBDO_ave",     "albdo_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "totprcp_ave",   "prate_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "DSWRF",         "dswrf_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "USWRF",         "uswrf_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "ULWRFtoa",      "ulwrf_avetoa","fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "hpbl",          "hpbl",        "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "pwat",          "pwatclm",     "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "TCDC_avehcl",   "tcdc_avehcl", "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "TCDC_avelcl",   "tcdc_avelcl", "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "TCDC_avemcl",   "tcdc_avemcl", "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "spd10max",      "spd10max",    "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "refdmax",       "refdmax",     "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "refdmax263k",   "refdmax263k", "fv3_history2d",         "all",  .false.,  "none",  2
+
+"gfs_phys",    "psurf",       "pressfc",   "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_phys",    "u10m",        "ugrd10m",   "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_phys",    "v10m",        "vgrd10m",   "fv3_history2d",  "all",  .false.,  "none",  2
+# TAS: this might be a duplicate of totprcp_avg above
+"gfs_sfc",     "tprcp",       "tprcp",     "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_sfc",     "hgtsfc",      "orog",      "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_sfc",     "weasd",       "weasd",     "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_sfc",     "q2m",         "spfh2m",    "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_sfc",     "t2m",         "tmp2m",     "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_sfc",     "tsfc",        "tmpsfc",    "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_sfc",     "snowd",       "snod",      "fv3_history2d",  "all",  .false.,  "none",  2
+
+"gfs_phys",    "lhtfl_ave",    "lhtfl_ave",     "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_phys",    "shtfl_ave",    "shtfl_ave",     "fv3_history2d",  "all",  .false.,  "none",  2
+
 #=============================================================================================
 #
 #====> This file can be used with diag_manager/v2.0a (or higher) <====
@@ -255,4 +159,3 @@ YYYY MM DD 00 0 0
 #         = 2  float
 #         = 4  packed 16-bit integers
 #         = 8  packed 1-byte (not tested?)
-

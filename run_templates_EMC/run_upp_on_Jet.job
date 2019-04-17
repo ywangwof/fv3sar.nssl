@@ -3,7 +3,7 @@
 #PBS -l partition=xjet:sjet:vjet
 #PBS -l nodes=NNNNNN:ppn=PPPPPP
 #PBS -l walltime=01:30:00
-#PBS -N fv3sar
+#PBS -N upp_HHHHHH
 #PBS -o WWWDDD/fv3sar_${PBS_JOBID}.out
 #PBS -e WWWDDD/fv3sar_${PBS_JOBID}.err
 #PBS -d .
@@ -53,9 +53,11 @@ TITLE="fv3sar_$CDATE"
 #
 #-----------------------------------------------------------------------
 
+cd WWWDDD
+
 ${APRUN} ${UPPEXE}/ncep_post < itag
 
-fhr2=$(printf "%02d" $fhr)
+fhr2=$(printf "%02d" ${fhr##0})
 
 mv BGDAWP.GrbF${fhr2} ../${TITLE}.t${cyc}z.bgdawp${fhr}.${tmmark}
 mv BGRD3D.GrbF${fhr2} ../${TITLE}.t${cyc}z.bgrd3d${fhr}.${tmmark}
