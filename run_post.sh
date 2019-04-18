@@ -1,6 +1,6 @@
 #!/bin/sh -l
 
-rootdir="/lfs3/projects/hpc-wof1/ywang/regional_fv3"
+#FV3SARDIR="/lfs3/projects/hpc-wof1/ywang/regional_fv3/fv3sar.mine"
 
 #-----------------------------------------------------------------------
 #
@@ -9,10 +9,9 @@ rootdir="/lfs3/projects/hpc-wof1/ywang/regional_fv3"
 #
 #-----------------------------------------------------------------------
 #
-UPPDIR="${rootdir}/EMC_post"
-UPPFIX="${rootdir}/UPP/fix"
-UPPEXE="${rootdir}/fv3sar.mine/exec"
-template_dir="${rootdir}/fv3sar.mine/run_templates_EMC"
+UPPFIX="${FV3SARDIR}/UPP_fix"
+UPPEXE="${FV3SARDIR}/exec"
+template_dir="${FV3SARDIR}/run_templates_EMC"
 
 #
 #-----------------------------------------------------------------------
@@ -109,10 +108,11 @@ EOF
 #-----------------------------------------------------------------------
   jobscript=run_upp_$fhr.job
   cp ${template_dir}/run_upp_on_Jet.job ${jobscript}
-  sed -i -e "/WWWDDD/s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#UUUPPP#${UPPDIR}#;s#EEEEEE#${UPPEXE}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${fhr}#;" ${jobscript}
+  sed -i -e "s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#EEEEEE#${UPPEXE}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${fhr}#;" ${jobscript}
 
   qsub $jobscript
 
 done
 
+exit
 

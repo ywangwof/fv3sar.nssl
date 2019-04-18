@@ -21,7 +21,7 @@ elif [[ $# > 0 ]]; then
 fi
 
 export CYCLE="00"
-export FIX_AM="${rootdir}/fix/fix_am"
+#export FIX_AM="${rootdir}/fix/fix_am"
 
 layout_x="32"
 layout_y="36"
@@ -132,14 +132,14 @@ if [ ! -f $donefv3 ]; then
   runfix_dir="${rootdir}/fv3sar.mine/run_fix"
   #ln -s ${runfix_dir}/global_o3prdlos.f77 .
   #ln -s ${runfix_dir}/global_h2oprdlos.f77 .
-  ln -s ${runfix_dir}/aerosol.dat .
-  ln -s ${runfix_dir}/solarconstant_noaa_an.txt .
-  ln -s ${runfix_dir}/CFSR.SEAICE.1982.2012.monthly.clim.grb .
-  ln -s ${runfix_dir}/RTGSST.1982.2012.monthly.clim.grb .
-  ln -s ${runfix_dir}/seaice_newland.grb .
-  ln -s ${runfix_dir}/sfc_emissivity_idx.txt .
-  ln -s ${runfix_dir}/co2* .
-  ln -s ${runfix_dir}/global_* .
+  #ln -s ${runfix_dir}/aerosol.dat .
+  #ln -s ${runfix_dir}/solarconstant_noaa_an.txt .
+  #ln -s ${runfix_dir}/CFSR.SEAICE.1982.2012.monthly.clim.grb .
+  #ln -s ${runfix_dir}/RTGSST.1982.2012.monthly.clim.grb .
+  #ln -s ${runfix_dir}/seaice_newland.grb .
+  #ln -s ${runfix_dir}/sfc_emissivity_idx.txt .
+  #ln -s ${runfix_dir}/co2* .
+  #ln -s ${runfix_dir}/global_* .
 
 
   ymd=`echo ${eventdate} |cut -c 1-8`
@@ -152,8 +152,7 @@ if [ ! -f $donefv3 ]; then
   sed -i -e "/NPES/s/NPES/${npes}/;/YYYY/s/YYYY/$yyy/;/MM/s/MM/$mmm/;/DD/s/DD/$ddd/" diag_table
 
   sed -i -e "/LAYOUT/s/LAYOUTX/${layout_x}/;s/LAYOUTY/${layout_y}/" input.nml
-  #sed -i -e "/NPESG/s/NPESG1/${npes}/"      input.nml
-  sed -i -e "/FIX_AM/s#FIX_AM#${FIX_AM}#"   input.nml
+  sed -i -e "/FIX_AM/s#FIX_AM#${runfix_dir}#"   input.nml
 fi
 
 #-----------------------------------------------------------------------
@@ -201,7 +200,8 @@ echo " "
 
 echo "-- 4: run post-processing at $(date +%m-%d_%H:%M:%S) ----"
 
-${rootdir}/fv3sar.mine/run_post.sh ${eventdir} ${eventdate}
+export FV3SARDIR="${rootdir}/fv3sar.mine"
+${FV3SARDIR}/run_post.sh ${eventdir} ${eventdate}
 
 echo " "
 
