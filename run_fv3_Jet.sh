@@ -132,14 +132,14 @@ if [ ! -f $donefv3 ]; then
   runfix_dir="${rootdir}/fv3sar.mine/run_fix"
   #ln -s ${runfix_dir}/global_o3prdlos.f77 .
   #ln -s ${runfix_dir}/global_h2oprdlos.f77 .
-  #ln -s ${runfix_dir}/aerosol.dat .
-  #ln -s ${runfix_dir}/solarconstant_noaa_an.txt .
-  #ln -s ${runfix_dir}/CFSR.SEAICE.1982.2012.monthly.clim.grb .
-  #ln -s ${runfix_dir}/RTGSST.1982.2012.monthly.clim.grb .
-  #ln -s ${runfix_dir}/seaice_newland.grb .
-  #ln -s ${runfix_dir}/sfc_emissivity_idx.txt .
-  #ln -s ${runfix_dir}/co2* .
-  #ln -s ${runfix_dir}/global_* .
+  ln -s ${runfix_dir}/aerosol.dat .
+  ln -s ${runfix_dir}/solarconstant_noaa_an.txt .
+  ln -s ${runfix_dir}/CFSR.SEAICE.1982.2012.monthly.clim.grb .
+  ln -s ${runfix_dir}/RTGSST.1982.2012.monthly.clim.grb .
+  ln -s ${runfix_dir}/seaice_newland.grb .
+  ln -s ${runfix_dir}/sfc_emissivity_idx.txt .
+  ln -s ${runfix_dir}/co2* .
+  ln -s ${runfix_dir}/global_* .
 
 
   ymd=`echo ${eventdate} |cut -c 1-8`

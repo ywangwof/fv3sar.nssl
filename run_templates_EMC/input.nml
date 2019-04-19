@@ -7,8 +7,8 @@
      date_out_of_range = 'climo',
 /
 
- &atmos_model_nml
-     blocksize = 32
+&atmos_model_nml
+     blocksize = 36
      chksum_debug = .false.
      dycore_only = .false.
      fdiag = 3
@@ -20,13 +20,13 @@
       prepend_date = .false.
 /
 
- &fms_io_nml
+&fms_io_nml
        checksum_required   = .false.
        max_files_r = 100,
        max_files_w = 100,
 /
 
- &fms_nml
+&fms_nml
        clock_grain = 'ROUTINE',
        domains_stack_size = 2000200,
        print_memory_usage = .false.
