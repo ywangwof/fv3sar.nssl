@@ -149,7 +149,7 @@ if [ ! -f $donefv3 ]; then
   ddd=`echo ${eventdate} |cut -c 7-8`
 
   sed -i -e "/NPES/s/NPES/${npes}/;/YYYY/s/YYYY/$yyy/;/MM/s/MM/$mmm/;/DD/s/DD/$ddd/" model_configure
-  sed -i -e "s/NODES2/${nodes2}/;s/PPN2/${quilt_ppn}/" model_configure
+  sed -i -e "s/NODES2/${quilt_nodes}/;s/PPN2/${quilt_ppn}/" model_configure
   sed -i -e "/NPES/s/NPES/${npes}/;/YYYY/s/YYYY/$yyy/;/MM/s/MM/$mmm/;/DD/s/DD/$ddd/" diag_table
 
   sed -i -e "/LAYOUT/s/LAYOUTX/${layout_x}/;s/LAYOUTY/${layout_y}/" input.nml
