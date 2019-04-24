@@ -1,12 +1,12 @@
 #!/bin/sh -l
-#PBS -A hpc-wof1
-#PBS -l partition=xjet:sjet:vjet
-#PBS -l nodes=NNNNNN:ppn=PPPPP1+MMMMMM:ppn=PPPPP2
-#PBS -l walltime=04:00:00
-#PBS -N fv3sar
-#PBS -o WWWDDD/fv3sar_${PBS_JOBID}.out
-#PBS -e WWWDDD/fv3sar_${PBS_JOBID}.err
-#PBS -d .
+#SBATCH -A hpc-wof1
+#SBATCH --partition=xjet,kjet
+#SBATCH -J fv3sar_ccpp
+#SBATCH --nodes=NNNNNN --ntasks-per-node=PPPPPP
+#SBATCH --exclusive
+#SBATCH -t 04:00:00
+#SBATCH -o WWWDDD/fv3sar_ccpp_%j.out
+#SBATCH -e WWWDDD/fv3sar_ccpp_%j.err
 
 #set -eux
 . /apps/lmod/lmod/init/sh
@@ -18,11 +18,12 @@ module load szip
 module load hdf5/1.8.9
 module load netcdf4/4.2.1.1
 module load contrib anaconda
+module load slurm
 
 module list
 
 time1=$(date '+%s')
-echo "Job Started: $(date). Job Id:  $PBS_JOBID"
+echo "Job Started: $(date). Job Id:  $SLURM_JOBID"
 echo " "
 
 RUNDIR='WWWDDD'
@@ -35,7 +36,8 @@ export ESMF_RUNTIME_COMPLIANCECHECK=OFF:depth=4
 
 export OMP_NUM_THREADS=2
 export MKL_NUM_THREADS=2
-mpirun -prepend-rank -np $PBS_NP /bin/env "OMP_NUM_THREADS=2" "MKL_NUM_THREADS=2" "KMP_NUM_THREADS=2" EXEPPP
+
+srun EXEPPP
 
 touch done.fv3
 

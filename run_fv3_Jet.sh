@@ -32,7 +32,8 @@ platppn="12"
 
 npes=$((layout_x * layout_y + quilt_nodes*quilt_ppn))
 nodes1=$(( layout_x * layout_y/platppn ))
-nodes2=$(( quilt_nodes ))
+nodes2=$(( quilt_nodes * quilt_ppn/platppn ))
+nodes=$(( nodes1 + nodes2 ))
 
 echo "---- Jobs started at $(date +%m-%d_%H:%M:%S) for Event: $eventdate; Working dir: $WORKDIR ----"
 #usage
@@ -126,7 +127,7 @@ if [ ! -f $donefv3 ]; then
   cp ${template_dir}/model_configure .
   cp ${template_dir}/nems.configure .
   #ln -s ${template_dir}/suite_FV3_GSD.xml ccpp_suite.xml
-  ln -s ${template_dir}/suite_FV3_GFS_2017_updated_thompson_mynn.xml ccpp_suite.xml
+  cp ${template_dir}/suite_FV3_GFS_2017_thompson_mynn.xml .
   ln -s ${template_dir}/CCN_ACTIVATE.BIN .
 
   runfix_dir="${rootdir}/fv3sar.mine/run_fix"
@@ -175,12 +176,13 @@ if [ ! -f $donefv3 ]; then
 
   cd ${eventdir}
 
-  jobscript=run_fv3sar_$eventdate${CYCLE}.job
+  jobscript=run_fv3sar_$eventdate${CYCLE}.slurm
   cp ${template_dir}/run_on_Jet_EMC.job ${jobscript}
-  sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NNNNNN#${nodes1}#;s#PPPPP1#${platppn}#g;s#PPPPP2#${quilt_ppn}#g;s#MMMMMM#${nodes2}#" ${jobscript}
+  sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NNNNNN#${nodes}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#" ${jobscript}
+  #sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NNNNNN#${nodes1}#;s#PPPPP1#${platppn}#g;s#MMMMMM#${nodes2}#;s#PPPPP2#${quilt_ppn}#g" ${jobscript}
 
-  echo "qsub $jobscript"
-  qsub $jobscript
+  echo "sbatch $jobscript"
+  sbatch $jobscript
 
   echo "Waiting for ${donefv3} ..."
   #while [[ ! -f ${donefv3} ]]; do

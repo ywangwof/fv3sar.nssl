@@ -11,7 +11,20 @@ FV3SARDIR=${FV3SARDIR-$(pwd)}  #"/lfs3/projects/hpc-wof1/ywang/regional_fv3/fv3s
 #
 UPPFIX="${FV3SARDIR}/UPP_fix"
 UPPEXE="${FV3SARDIR}/exec"
-template_dir="${FV3SARDIR}/run_templates_EMC"
+
+hostname=$(hostname)
+case $hostname in
+  odin?)
+    template_job="${FV3SARDIR}/run_templates_EMC/run_upp_on_Odin.job"
+    ;;
+  fe*)
+    template_job="${FV3SARDIR}/run_templates_EMC/run_upp_on_Jet.job"
+    ;;
+  *)
+    echo "Unsupported machine: $hostname."
+    exit
+    ;;
+esac
 
 #
 #-----------------------------------------------------------------------
@@ -111,7 +124,7 @@ EOF
 #
 #-----------------------------------------------------------------------
   jobscript=run_upp_$fhr.job
-  cp ${template_dir}/run_upp_on_Odin.job ${jobscript}
+  cp ${template_job} ${jobscript}
   sed -i -e "s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#g;s#EEEEEE#${UPPEXE}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${fhr}#;" ${jobscript}
 
   sbatch $jobscript
