@@ -1,15 +1,16 @@
-#!/bin/sh -l
-#PBS -A hpc-wof1
-#PBS -l partition=xjet:sjet:vjet
-#PBS -l nodes=NNNNNN:ppn=PPPPPP
-#PBS -l walltime=00:30:00
-#PBS -N upp_HHHHHH
-#PBS -o WWWDDD/fv3sar_${PBS_JOBID}.out
-#PBS -e WWWDDD/fv3sar_${PBS_JOBID}.err
-#PBS -d .
+#!/bin/bash
+#SBATCH -A smallqueue
+#SBATCH -p workq
+#SBATCH -J upp_HHHHHH
+#SBATCH -N NNNNNN -n NPES
+#SBATCH --ntasks-per-node=PPPPPP
+#SBATCH --exclusive
+#SBATCH -t 00:30:00
+#SBATCH -o WWWDDD/fv3sar_ccpp_%j.out
+#SBATCH -e WWWDDD/fv3sar_ccpp_%j.err
 
 time1=$(date '+%s')
-echo "Job Started: $(date). Job Id:  $PBS_JOBID"
+echo "Job Started: $(date). Job Id:  $SLURM_JOBID"
 echo " "
 
 #-----------------------------------------------------------------------
@@ -19,16 +20,9 @@ echo " "
 #-----------------------------------------------------------------------
 #
 
-module purge
-module load intel/18.0.5.274
-module load impi/2018.4.274
-module load szip/2.1
-module load hdf5/1.8.9
-module load netcdf/4.2.1.1
-module load hdf4
 
 #export APRUN="mpirun -l -np $PBS_NP"
-export APRUN=""
+export APRUN="srun -n 1"
 
 UPPEXE=EEEEEE
 

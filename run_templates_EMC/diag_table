@@ -98,7 +98,7 @@ YYYY MM DD 00 0 0
 "gfs_dyn",   "maxvort02",     "maxvort02",   "fv3_history",           "all",  .false.,  "none", 2
 "gfs_dyn",   "maxvorthy1",    "maxvorthy1",  "fv3_history",           "all",  .false.,  "none", 2
 "gfs_phys",  "ALBDO_ave",     "albdo_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
-"gfs_phys",  "totprcp_ave",   "prate_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
+#"gfs_phys",  "totprcp_ave",   "prate_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
 "gfs_phys",  "DSWRF",         "dswrf_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
 "gfs_phys",  "USWRF",         "uswrf_ave",   "fv3_history2d",         "all",  .false.,  "none",  2
 "gfs_phys",  "ULWRFtoa",      "ulwrf_avetoa","fv3_history2d",         "all",  .false.,  "none",  2

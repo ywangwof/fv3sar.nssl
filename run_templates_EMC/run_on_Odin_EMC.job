@@ -1,10 +1,9 @@
-#!/bin/sh -l
 #!/bin/bash
 #SBATCH -A smallqueue
 #SBATCH -p workq
 #SBATCH -J fv3sar_ccpp
-#SBATCH -N 57 -n NPES
-#SBATCH --ntasks-per-node=24
+#SBATCH -N NNNNNN -n NPES
+#SBATCH --ntasks-per-node=PPPPPP
 #SBATCH --exclusive
 #SBATCH -t 03:30:00
 #SBATCH -o WWWDDD/fv3sar_ccpp_%j.out
@@ -12,7 +11,7 @@
 
 
 time1=$(date '+%s')
-echo "Job Started: $(date). Job Id:  $PBS_JOBID"
+echo "Job Started: $(date). Job Id:  $SLURM_JOBID"
 echo " "
 
 RUNDIR='WWWDDD'
@@ -23,11 +22,10 @@ export MPI_TYPE_DEPTH=20
 export OMP_STACKSIZE=512M
 export ESMF_RUNTIME_COMPLIANCECHECK=OFF:depth=4
 
-export OMP_NUM_THREADS=2 MKL_NUM_THREADS=0
+export OMP_NUM_THREADS=2
+export MKL_NUM_THREADS=2
 
 srun -n NPES EXEPPP
-
-#mpirun -prepend-rank -np $PBS_NP /bin/env "OMP_NUM_THREADS=2" "MKL_NUM_THREADS=2" "KMP_NUM_THREADS=2" EXEPPP
 
 touch done.fv3
 

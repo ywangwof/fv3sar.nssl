@@ -21,7 +21,19 @@ elif [[ $# > 0 ]]; then
 fi
 
 export CYCLE="00"
-export FIX_AM="${rootdir}/fix_am"
+#export FIX_AM="${rootdir}/fix/fix_am"
+
+layout_x="32"
+layout_y="36"
+quilt_nodes="3"
+quilt_ppn="24"
+
+platppn="24"
+
+npes=$((layout_x * layout_y + quilt_nodes*quilt_ppn))
+nodes1=$(( layout_x * layout_y/platppn ))
+nodes2=$(( quilt_nodes ))
+nodes=$(( nodes1 + nodes2 ))
 
 echo "---- Jobs started at $(date +%m-%d_%H:%M:%S) for Event: $eventdate; Working dir: $WORKDIR ----"
 #usage
@@ -41,6 +53,12 @@ emc_event="${emc_dir}/fv3sar.${eventdate}/${CYCLE}"
 emcdone="donefile.${eventdate}${CYCLE}"
 
 emcurl="ftp://ftp.emc.ncep.noaa.gov/mmb/mmbpll/fv3sar/fv3sar.${eventdate}/${CYCLE}"
+files=(gfs_ctrl.nc gfs_data.tile7.nc sfc_data.tile7.nc)
+for hr in $(seq 0 3 60); do
+  fhr=$(printf "%03d" $hr)
+  files+=(gfs_bndy.tile7.${fhr}.nc)
+done
+files+=(${emcdone})
 
 if [ ! -f ${emc_event}/${emcdone} ]; then
 
@@ -57,7 +75,10 @@ if [ ! -f ${emc_event}/${emcdone} ]; then
   done
 
   rm -f ${emc_event}/${emcdone}
-  wget -m -nH --cut-dirs=3 ${emcurl} > /dev/null 2>&1
+  for fn in ${files[@]}; do
+    echo "Downloading $fn ....."
+    wget -m -nH --cut-dirs=3 ${emcurl}/$fn > /dev/null 2>&1
+  done
 fi
 
 echo " "
@@ -105,7 +126,8 @@ if [ ! -f $donefv3 ]; then
   cp ${template_dir}/input.nml .
   cp ${template_dir}/model_configure .
   cp ${template_dir}/nems.configure .
-  ln -s ${template_dir}/suite_FV3_GSD.xml ccpp_suite.xml
+  #ln -s ${template_dir}/suite_FV3_GSD.xml ccpp_suite.xml
+  cp ${template_dir}/suite_FV3_GFS_2017_thompson_mynn.xml .
   ln -s ${template_dir}/CCN_ACTIVATE.BIN .
 
   runfix_dir="${rootdir}/fv3sar.mine/run_fix"
@@ -126,16 +148,13 @@ if [ ! -f $donefv3 ]; then
   mmm=`echo ${eventdate} |cut -c 5-6`
   ddd=`echo ${eventdate} |cut -c 7-8`
 
-  layout_x="24"
-  layout_y="36"
-  npes=$((layout_x * layout_y + 3*24))
-
   sed -i -e "/NPES/s/NPES/${npes}/;/YYYY/s/YYYY/$yyy/;/MM/s/MM/$mmm/;/DD/s/DD/$ddd/" model_configure
+  sed -i -e "s/NODES2/${nodes2}/;s/PPN2/${quilt_ppn}/" model_configure
   sed -i -e "/NPES/s/NPES/${npes}/;/YYYY/s/YYYY/$yyy/;/MM/s/MM/$mmm/;/DD/s/DD/$ddd/" diag_table
 
   sed -i -e "/LAYOUT/s/LAYOUTX/${layout_x}/;s/LAYOUTY/${layout_y}/" input.nml
-  #sed -i -e "/NPESG/s/NPESG1/${npes}/"      input.nml
-  sed -i -e "/FIX_AM/s#FIX_AM#${FIX_AM}#"   input.nml
+  #sed -i -e "/FIX_AM/s#FIX_AM#${FIX_AM}#"   input.nml
+  sed -i -e "/FIX_AM/s#FIX_AM#${runfix_dir}#"   input.nml
 fi
 
 #-----------------------------------------------------------------------
@@ -160,17 +179,17 @@ if [ ! -f $donefv3 ]; then
 
   jobscript=run_fv3sar_$eventdate${CYCLE}.slurm
   cp ${template_dir}/run_on_Odin_EMC.job ${jobscript}
-  sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NPES#${npes}#" ${jobscript}
+  sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NNNNNN#${nodes}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#" ${jobscript}
 
   echo "sbatch $jobscript"
   sbatch $jobscript
 
   echo "Waiting for ${donefv3} ..."
-  while [[ ! -f ${donefv3} ]]; do
-    sleep 10
-    #echo "Waiting for ${donefv3} ..."
-  done
-  ls -l ${donefv3}
+  #while [[ ! -f ${donefv3} ]]; do
+  #  sleep 10
+  #  #echo "Waiting for ${donefv3} ..."
+  #done
+  #ls -l ${donefv3}
 fi
 
 echo " "
@@ -183,34 +202,18 @@ echo " "
 
 echo "-- 4: run post-processing at $(date +%m-%d_%H:%M:%S) ----"
 
-donepost="$WORKDIR/C384_${eventdate}00_VLab/done.post"
-# to be run on wof-post2
-#
-if [ ! -f $donepost ]; then
-  #echo "Waiting for ${donefv3} ..."
-  #while [[ ! -f ${donefv3} ]]; do
-  #  sleep 10
-  #  #echo "Waiting for ${donefv3} ..."
-  #done
-  #ls -l ${donefv3}
-
-  echo "ssh wof-post2 /scratch/ywang/external/fv3gfs.mine/CAPS_post_C384/postprocess.csh"
-  ssh wof-post2 "/scratch/ywang/external/fv3gfs.mine/CAPS_post_C384/postprocess.csh $eventdate"
-
-  #echo "Waiting for ${donepost} ..."
-  #while [[ ! -f ${donepost} ]]; do
-  #  sleep 10
-  #  #echo "Waiting for ${donepost} ..."
-  #done
-  #ls -l ${donepost}
-
-fi
+export FV3SARDIR="${rootdir}/fv3sar.mine"
+${FV3SARDIR}/run_post.sh ${eventdir} ${eventdate}
 
 echo " "
 
+exit
+
+#-----------------------------------------------------------------------
 #
 # 5. Transfer grib files
 #
+#-----------------------------------------------------------------------
 
 echo "-- 5: Transfer grib2 file to bigbang3 at $(date +%m-%d_%H:%M:%S) ----"
 
@@ -234,9 +237,11 @@ fi
 
 echo " "
 
+#-----------------------------------------------------------------------
 #
 # 6. Clean old runs
 #
+#-----------------------------------------------------------------------
 
 cleandate=$(date -d "2 days ago" +%Y%m%d )
 echo "-- 5: Clean run on ${cleandate} ----"

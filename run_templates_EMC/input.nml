@@ -12,7 +12,7 @@
      chksum_debug = .false.
      dycore_only = .false.
      fdiag = 3
-     ccpp_suite = 'ccpp_suite.xml'
+     ccpp_suite = 'FV3_GFS_2017_thompson_mynn'
      avg_max_length = 3600.
 /
 
@@ -32,11 +32,11 @@
        print_memory_usage = .false.
 /
 
- &fv_grid_nml
+&fv_grid_nml
        grid_file = 'INPUT/grid_spec.nc'
 /
 
- &fv_core_nml
+&fv_core_nml
        layout   =  LAYOUTX,LAYOUTY
        io_layout = 1,1
        npx      = 1921
@@ -150,8 +150,8 @@
        ncld           = 2
        imp_physics    = 8
        ltaerosol      = .F.
-       lradar         = .F.
-	ttendlim=0.005
+       lradar         = .T.
+       ttendlim       = 0.05
        pdfcld         = .false.
        fhswr          = 3600.
        fhlwr          = 3600.
