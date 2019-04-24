@@ -1,6 +1,6 @@
 #!/bin/sh -l
 
-#FV3SARDIR="/lfs3/projects/hpc-wof1/ywang/regional_fv3/fv3sar.mine"
+FV3SARDIR=${FV3SARDIR-$(pwd)}  #"/lfs3/projects/hpc-wof1/ywang/regional_fv3/fv3sar.mine"
 
 #-----------------------------------------------------------------------
 #
@@ -24,8 +24,11 @@ template_dir="${FV3SARDIR}/run_templates_EMC"
 RUNDIR=$1      # $eventdir
 CDATE=$2
 
+sfhr=${3-0}
+
 nodes1="1"
 platppn="24"
+npes="24"
 
 #-----------------------------------------------------------------------
 #
@@ -37,7 +40,7 @@ platppn="24"
 #-----------------------------------------------------------------------
 POSTPRD_DIR="$RUNDIR/postprd"
 
-for hr in $(seq 0 1 60); do
+for hr in $(seq $sfhr 1 60); do
   fhr=$(printf "%03d" $hr)
 
   dyn_file=${RUNDIR}/dynf${fhr}.nc
@@ -108,10 +111,10 @@ EOF
 #
 #-----------------------------------------------------------------------
   jobscript=run_upp_$fhr.job
-  cp ${template_dir}/run_upp_on_Jet.job ${jobscript}
-  sed -i -e "s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#EEEEEE#${UPPEXE}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${fhr}#;" ${jobscript}
+  cp ${template_dir}/run_upp_on_Odin.job ${jobscript}
+  sed -i -e "s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#g;s#EEEEEE#${UPPEXE}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${fhr}#;" ${jobscript}
 
-  qsub $jobscript
+  sbatch $jobscript
 
 done
 
