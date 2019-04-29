@@ -1,7 +1,9 @@
 #!/bin/bash
+#rootdir="/lfs3/projects/wof/fv3_regional"
 rootdir="/lfs3/projects/hpc-wof1/ywang/regional_fv3"
 WORKDIRDF="${rootdir}/run_dirs"
 eventdateDF=$(date +%Y%m%d)
+
 #export eventdate="20180214"
 
 function usage {
@@ -13,6 +15,7 @@ function usage {
 
 export WORKDIR="$WORKDIRDF"
 export eventdate="$eventdateDF"
+
 if [[ $# > 1 ]]; then
   export WORKDIR="$2"
   export eventdate="$1"
@@ -28,7 +31,7 @@ layout_y="36"
 quilt_nodes="3"
 quilt_ppn="24"
 
-platppn="12"
+platppn="24"
 
 npes=$((layout_x * layout_y + quilt_nodes*quilt_ppn))
 nodes1=$(( layout_x * layout_y/platppn ))
@@ -52,13 +55,59 @@ cd ${emc_dir}
 emc_event="${emc_dir}/fv3sar.${eventdate}/${CYCLE}"
 emcdone="donefile.${eventdate}${CYCLE}"
 
-emcurl="ftp://ftp.emc.ncep.noaa.gov/mmb/mmbpll/fv3sar/fv3sar.${eventdate}/${CYCLE}"
 files=(gfs_ctrl.nc gfs_data.tile7.nc sfc_data.tile7.nc)
 for hr in $(seq 0 3 60); do
   fhr=$(printf "%03d" $hr)
   files+=(gfs_bndy.tile7.${fhr}.nc)
 done
 files+=(${emcdone})
+
+#
+# 1.1 Try public/data directory first
+#
+publicdatadir="/public/data/grids/ncep/fv3sar"
+
+if [ ! -f ${emc_event}/${emcdone} ]; then
+
+  if [[ ! -d ${emc_event} ]]; then
+    mkdir -p ${emc_event}
+  fi
+
+  currjdate=$(date +%j)
+  curryyval=$(date +%g)
+
+  jdate=$(date -d "$eventdate" +%j)
+  yyval=$(date -d "$eventdate" +%g)
+
+  waitmaxseconds=3600   # wait for at most 1-hour
+  waitseconds=0
+  found=0
+  while [[ $curryyval -eq $yyval && ($currjdate -eq $jdate || $currjdate -eq $((jdate+1))) && $waitseconds -lt $waitmaxseconds ]]; do
+
+    if [[ -f ${publicdatadir}/${yyval}${jdate}0000.${emcdone} ]]; then
+      found=1
+      break
+    else
+      echo "Waiting for EMC datasets in ${publicdatadir} ($waitseconds)..."
+      sleep 10
+      waitseconds=$(( waitseconds+=10 ))
+    fi
+  done
+
+  if [[ $found -gt 0 ]]; then
+    for fn in ${files[@]}; do
+      echo "Copying $fn ....."
+      #cp -v ${publicdatadir}/${yyval}${jdate}0000.$fn ${emc_event}/$fn
+    done
+
+    #touch ${emc_event}/${emcdone}
+  fi
+fi
+
+#
+# 1.2 Try the ftp server if not found in publicdatadir
+#
+emcurl="ftp://ftp.emc.ncep.noaa.gov/mmb/mmbpll/fv3sar/fv3sar.${eventdate}/${CYCLE}"
 
 if [ ! -f ${emc_event}/${emcdone} ]; then
 
@@ -74,7 +123,6 @@ if [ ! -f ${emc_event}/${emcdone} ]; then
     fi
   done
 
-  rm -f ${emc_event}/${emcdone}
   for fn in ${files[@]}; do
     echo "Downloading $fn ....."
     wget -m -nH --cut-dirs=3 ${emcurl}/$fn > /dev/null 2>&1
@@ -180,6 +228,8 @@ if [ ! -f $donefv3 ]; then
   cp ${template_dir}/run_on_Jet_EMC.job ${jobscript}
   sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NNNNNN#${nodes}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#" ${jobscript}
   #sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NNNNNN#${nodes1}#;s#PPPPP1#${platppn}#g;s#MMMMMM#${nodes2}#;s#PPPPP2#${quilt_ppn}#g" ${jobscript}
+
+  module load slurm
 
   echo "sbatch $jobscript"
   sbatch $jobscript

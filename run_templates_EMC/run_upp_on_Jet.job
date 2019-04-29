@@ -60,7 +60,7 @@ export OMP_NUM_THREADS=4
 
 ${APRUN} ${UPPEXE}/ncep_post < itag
 
-fhr2=$(printf "%02d" ${fhr##0})
+fhr2=$(printf "%02d" ${fhr##0?})
 
 mv BGDAWP.GrbF${fhr2} ../${TITLE}.t${cyc}z.bgdawp${fhr}.${tmmark}
 mv BGRD3D.GrbF${fhr2} ../${TITLE}.t${cyc}z.bgrd3d${fhr}.${tmmark}
@@ -71,6 +71,10 @@ mv BGRD3D.GrbF${fhr2} ../${TITLE}.t${cyc}z.bgrd3d${fhr}.${tmmark}
 #
 #-----------------------------------------------------------------------
 
+cd ..
+if [[ -s ${TITLE}.t${cyc}z.bgdawp${fhr}.${tmmark} ]]; then
+  touch ${TITLE}.t${cyc}z.bgdawp${fhr}.${tmmark}_ready
+fi
 
 echo "Post-processing completed for fhr = $fhr hr."
 
