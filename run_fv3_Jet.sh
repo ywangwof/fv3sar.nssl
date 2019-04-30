@@ -28,10 +28,10 @@ export CYCLE="00"
 
 layout_x="32"
 layout_y="36"
-quilt_nodes="3"
-quilt_ppn="24"
+quilt_nodes="6"
+quilt_ppn="12"
 
-platppn="24"
+platppn="12"
 
 npes=$((layout_x * layout_y + quilt_nodes*quilt_ppn))
 nodes1=$(( layout_x * layout_y/platppn ))
@@ -97,7 +97,7 @@ if [ ! -f ${emc_event}/${emcdone} ]; then
   if [[ $found -gt 0 ]]; then
     for fn in ${files[@]}; do
       echo "Copying $fn ....."
-      #cp -v ${publicdatadir}/${yyval}${jdate}0000.$fn ${emc_event}/$fn
+      cp -v ${publicdatadir}/${yyval}${jdate}0000.$fn ${emc_event}/$fn
     done
 
     #touch ${emc_event}/${emcdone}

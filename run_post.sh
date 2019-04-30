@@ -61,8 +61,8 @@ for hr in $(seq $sfhr 1 60); do
 
   wtime=0
   while [[ ! -f ${dyn_file} ]]; do
-    sleep 10
-    wtime=$(( wtime += 10 ))
+    sleep 20
+    wtime=$(( wtime += 20 ))
     echo "Waiting ($wtime seconds) for ${dyn_file}"
   done
 

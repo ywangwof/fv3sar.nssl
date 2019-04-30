@@ -2,10 +2,9 @@
 #SBATCH -A hpc-wof1
 #SBATCH --partition=xjet,kjet
 #SBATCH -J fv3sar_ccpp
-#SBATCH --nodes=NNNNNN --ntasks=NPES
-#SBATCH --ntasks-per-node=PPPPPP
+#SBATCH --nodes=NNNNNN --ntasks-per-node=PPPPPP --cpus-per-task=2
 #SBATCH --exclusive
-#SBATCH -t 05:20:00
+#SBATCH -t 05:30:00
 #SBATCH -o WWWDDD/fv3sar_ccpp_%j.out
 #SBATCH -e WWWDDD/fv3sar_ccpp_%j.err
 
@@ -35,8 +34,8 @@ export MPI_TYPE_DEPTH=20
 export OMP_STACKSIZE=512M
 export ESMF_RUNTIME_COMPLIANCECHECK=OFF:depth=4
 
-export OMP_NUM_THREADS=1
-export MKL_NUM_THREADS=1
+export OMP_NUM_THREADS=2
+export MKL_NUM_THREADS=2
 
 srun -n NPES EXEPPP
 
