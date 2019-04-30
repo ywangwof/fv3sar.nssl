@@ -202,11 +202,15 @@
        bl_mynn_edmf_mom = 1
 /
 
-  &interpolator_nml
+&interpolator_nml
        interp_method = 'conserve_great_circle'
 /
 
- &namsfc
+&fv_diagnostic_nml
+       do_hailcast = .true.
+/
+
+&namsfc
        FNGLAC   = "FIX_AM/global_glacier.2x2.grb",
        FNMXIC   = "FIX_AM/global_maxice.2x2.grb",
        FNTSFC   = "FIX_AM/RTGSST.1982.2012.monthly.clim.grb",

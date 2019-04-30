@@ -5,7 +5,7 @@
 #SBATCH --nodes=NNNNNN --ntasks=NPES
 #SBATCH --ntasks-per-node=PPPPPP
 #SBATCH --exclusive
-#SBATCH -t 05:00:00
+#SBATCH -t 05:20:00
 #SBATCH -o WWWDDD/fv3sar_ccpp_%j.out
 #SBATCH -e WWWDDD/fv3sar_ccpp_%j.err
 

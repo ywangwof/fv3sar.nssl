@@ -59,14 +59,17 @@ for hr in $(seq $sfhr 1 60); do
   dyn_file=${RUNDIR}/dynf${fhr}.nc
   phy_file=${RUNDIR}/phyf${fhr}.nc
 
+  wtime=0
   while [[ ! -f ${dyn_file} ]]; do
     sleep 10
-    echo "Waiting for ${dyn_file}"
+    wtime=$(( wtime += 10 ))
+    echo "Waiting ($wtime seconds) for ${dyn_file}"
   done
 
   while [[ ! -f ${phy_file} ]]; do
     sleep 10
-    echo "Waiting for ${phy_file}"
+    wtime=$(( wtime += 10 ))
+    echo "Waiting ($wtime seconds) for ${phy_file}"
   done
 
   FHR_DIR="${POSTPRD_DIR}/$fhr"
@@ -85,7 +88,7 @@ for hr in $(seq $sfhr 1 60); do
 #-----------------------------------------------------------------------
 
 
-  POST_TIME=$( date -d "${CDATE} $fhr hours" +%Y%m%d%H%M )
+  POST_TIME=$( date -d "${CDATE} $hr hours" +%Y%m%d%H%M )
   POST_YYYY=${POST_TIME:0:4}
   POST_MM=${POST_TIME:4:2}
   POST_DD=${POST_TIME:6:2}
@@ -125,7 +128,7 @@ EOF
 #-----------------------------------------------------------------------
   jobscript=run_upp_$fhr.job
   cp ${template_job} ${jobscript}
-  sed -i -e "s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#g;s#EEEEEE#${UPPEXE}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${fhr}#;" ${jobscript}
+  sed -i -e "s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#g;s#EEEEEE#${UPPEXE}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;" ${jobscript}
 
   sbatch $jobscript
 

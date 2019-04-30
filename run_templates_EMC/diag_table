@@ -127,6 +127,18 @@ YYYY MM DD 00 0 0
 "gfs_phys",    "lhtfl_ave",    "lhtfl_ave",     "fv3_history2d",  "all",  .false.,  "none",  2
 "gfs_phys",    "shtfl_ave",    "shtfl_ave",     "fv3_history2d",  "all",  .false.,  "none",  2
 
+################################################################################
+# File output for HAILCAST
+# John Henderson AER 20190227
+# AER Hailcast jmh 20190226
+"hailcast_%4yr%2mo%2dy%2hr", 1, "hours", 1, "hours", "Time", 1 "hours"
+"dynamics",   "hailcast_dhail1",    "HAILCAST_DHAIL1",    "hailcast_%4yr%2mo%2dy%2hr", "all", max, "none", 2
+"dynamics",   "hailcast_dhail2",    "HAILCAST_DHAIL2",    "hailcast_%4yr%2mo%2dy%2hr", "all", max, "none", 2
+"dynamics",   "hailcast_dhail3",    "HAILCAST_DHAIL3",    "hailcast_%4yr%2mo%2dy%2hr", "all", max, "none", 2
+"dynamics",   "hailcast_dhail4",    "HAILCAST_DHAIL4",    "hailcast_%4yr%2mo%2dy%2hr", "all", max, "none", 2
+"dynamics",   "hailcast_dhail5",    "HAILCAST_DHAIL5",    "hailcast_%4yr%2mo%2dy%2hr", "all", max, "none", 2
+#"dynamics",   "hailcast_diam_mean", "HAILCAST_DIAM_MEAN", "hailcast_%4yr%2mo%2dy%2hr", "all", max, "none", 2
+#"dynamics",   "hailcast_diam_std",  "HAILCAST_DIAM_STD",  "hailcast_%4yr%2mo%2dy%2hr", "all", max, "none", 2
 #=============================================================================================
 #
 #====> This file can be used with diag_manager/v2.0a (or higher) <====
