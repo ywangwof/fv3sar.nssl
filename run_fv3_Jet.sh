@@ -79,18 +79,37 @@ if [ ! -f ${emc_event}/${emcdone} ]; then
   jdate=$(date -d "$eventdate" +%j)
   yyval=$(date -d "$eventdate" +%g)
 
-  waitmaxseconds=3600   # wait for at most 1-hour
-  waitseconds=0
-  found=0
-  while [[ $curryyval -eq $yyval && ($currjdate -eq $jdate || $currjdate -eq $((jdate+1))) && $waitseconds -lt $waitmaxseconds ]]; do
+  waitmaxseconds=7200   # wait for at most 1-hour
+  waitseconds=0;  found=0; orgdatasize=-1
 
-    if [[ -f ${publicdatadir}/${yyval}${jdate}0000.${emcdone} ]]; then
-      found=1
-      break
+  while [[ $waitseconds -lt $waitmaxseconds ]]; do
+
+    if [[ $curryyval -eq $yyval && $currjdate -le $((jdate+2)) ]]; then
+
+      gfsdatafile="${publicdatadir}/${yyval}${jdate}0000.gfs_data.tile7.nc"
+
+      if [[ -f ${gfsdatafile} ]]; then
+        gfsdatasize=$(stat --printf="%s" ${gfsdatafile})
+
+        filesizediff=$(( gfsdatasize - orgdatasize ))
+
+        if [[ $filesizediff -le 0 ]]; then
+        #if [[ -f ${publicdatadir}/${yyval}${jdate}0000.${emcdone} ]]; then
+          found=1
+          break
+        else
+          echo "File ${gfsdatafile} is actively changing at $waitseconds seconds (${orgdatasize} -> $gfsdatasize) ..."
+          orgdatasize=${gfsdatasize}
+        fi
+      else
+        echo "Waiting for EMC datasets ${publicdatadir}/${yyval}${jdate}0000.* ($waitseconds)..."
+      fi
+
+      sleep 20
+      waitseconds=$(( waitseconds+=20 ))
     else
-      echo "Waiting for EMC datasets in ${publicdatadir} ($waitseconds)..."
-      sleep 10
-      waitseconds=$(( waitseconds+=10 ))
+      #echo "$jdate, $currjdate"
+      break         # case is older than 2 days
     fi
   done
 
@@ -229,7 +248,7 @@ if [ ! -f $donefv3 ]; then
   sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NNNNNN#${nodes}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#" ${jobscript}
   #sed -i -e "/WWWDDD/s#WWWDDD#$eventdir#;s#EXEPPP#$EXEPRO#;s#NNNNNN#${nodes1}#;s#PPPPP1#${platppn}#g;s#MMMMMM#${nodes2}#;s#PPPPP2#${quilt_ppn}#g" ${jobscript}
 
-  module load slurm
+  #module load slurm
 
   echo "sbatch $jobscript"
   sbatch $jobscript

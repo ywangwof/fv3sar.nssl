@@ -277,8 +277,8 @@
        </param>
 
        <param>
-       <shortname>INST_USWRF_ON_SURFACE</shortname>
-       <pname>USWRF</pname>
+       <shortname>INST_DSWRF_ON_SURFACE</shortname>
+       <pname>DSWRF</pname>
        <table_info>NCEP</table_info>
        <scale>4.0</scale>
        </param>
@@ -493,6 +493,13 @@
        <fixed_sfc1_type>isothermal</fixed_sfc1_type>
        <level>263.</level>
        <scale>-4.0</scale>
+       </param>
+
+       <param>
+       <shortname>HAILCAST_DHAIL_ON_SURFACE</shortname>
+       <pname>HAIL</pname>
+       <fixed_sfc1_type>surface</fixed_sfc1_type>
+       <scale>4.0</scale>
        </param>
 
     </paramset>

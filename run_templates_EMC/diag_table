@@ -82,11 +82,18 @@ YYYY MM DD 00 0 0
 "gfs_dyn",     "rainwat",     "rwmr",      "fv3_history",    "all",  .false.,  "none",  2
 "gfs_dyn",     "snowwat",     "snmr",      "fv3_history",    "all",  .false.,  "none",  2
 "gfs_dyn",     "graupel",     "grle",      "fv3_history",    "all",  .false.,  "none",  2
+"gfs_dyn",     "hailwat",     "hail",      "fv3_history",    "all",  .false.,  "none",  2
 "gfs_dyn",     "ps",          "pressfc",   "fv3_history",    "all",  .false.,  "none",  2
 "gfs_dyn",     "hs",          "hgtsfc",    "fv3_history",    "all",  .false.,  "none",  2
 "gfs_phys",    "refl_10cm"    "refl_10cm"  "fv3_history",         "all",  .false.,  "none",  2
+"gfs_dyn",     "water_nc",    "ncld",      "fv3_history",  "all",  .false.,  "none",  2
 "gfs_dyn",     "ice_nc",      "nicp",      "fv3_history",  "all",  .false.,  "none",  2
 "gfs_dyn",     "rain_nc",     "ntrnc",     "fv3_history",  "all",  .false.,  "none",  2
+"gfs_dyn",     "snow_nc",     "ntsnc",     "fv3_history",  "all",  .false.,  "none",  2
+"gfs_dyn",     "grap_nc",     "ntgnc",     "fv3_history",  "all",  .false.,  "none",  2
+"gfs_dyn",     "hail_nc",     "nthnc",     "fv3_history",  "all",  .false.,  "none",  2
+"gfs_dyn",     "grap_pv",     "volgrap",   "fv3_history",  "all",  .false.,  "none",  2
+"gfs_dyn",     "hail_pv",     "volhail",   "fv3_history",  "all",  .false.,  "none",  2
 
 "gfs_dyn",   "wmaxup",        "upvvelmax",   "fv3_history",           "all",  .false.,  "none", 2
 "gfs_dyn",   "wmaxdn",        "dnvvelmax",   "fv3_history",           "all",  .false.,  "none", 2
@@ -108,6 +115,8 @@ YYYY MM DD 00 0 0
 "gfs_phys",  "TCDC_avehcl",   "tcdc_avehcl", "fv3_history2d",         "all",  .false.,  "none",  2
 "gfs_phys",  "TCDC_avelcl",   "tcdc_avelcl", "fv3_history2d",         "all",  .false.,  "none",  2
 "gfs_phys",  "TCDC_avemcl",   "tcdc_avemcl", "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "u10max",        "u10max",      "fv3_history2d",         "all",  .false.,  "none",  2
+"gfs_phys",  "v10max",        "v10max",      "fv3_history2d",         "all",  .false.,  "none",  2
 "gfs_phys",  "spd10max",      "spd10max",    "fv3_history2d",         "all",  .false.,  "none",  2
 "gfs_phys",  "refdmax",       "refdmax",     "fv3_history2d",         "all",  .false.,  "none",  2
 "gfs_phys",  "refdmax263k",   "refdmax263k", "fv3_history2d",         "all",  .false.,  "none",  2
@@ -115,7 +124,6 @@ YYYY MM DD 00 0 0
 "gfs_phys",    "psurf",       "pressfc",   "fv3_history2d",  "all",  .false.,  "none",  2
 "gfs_phys",    "u10m",        "ugrd10m",   "fv3_history2d",  "all",  .false.,  "none",  2
 "gfs_phys",    "v10m",        "vgrd10m",   "fv3_history2d",  "all",  .false.,  "none",  2
-# TAS: this might be a duplicate of totprcp_avg above
 "gfs_sfc",     "tprcp",       "tprcp",     "fv3_history2d",  "all",  .false.,  "none",  2
 "gfs_sfc",     "hgtsfc",      "orog",      "fv3_history2d",  "all",  .false.,  "none",  2
 "gfs_sfc",     "weasd",       "weasd",     "fv3_history2d",  "all",  .false.,  "none",  2
@@ -131,12 +139,19 @@ YYYY MM DD 00 0 0
 # File output for HAILCAST
 # John Henderson AER 20190227
 # AER Hailcast jmh 20190226
-"hailcast_hour%4yr%2mo%2dy%2hr", 1, "hours", 1, "hours", "Time", 1 "hours"
-"dynamics",   "hailcast_dhail1",    "HAILCAST_DHAIL1",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
-"dynamics",   "hailcast_dhail2",    "HAILCAST_DHAIL2",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
-"dynamics",   "hailcast_dhail3",    "HAILCAST_DHAIL3",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
-"dynamics",   "hailcast_dhail4",    "HAILCAST_DHAIL4",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
-"dynamics",   "hailcast_dhail5",    "HAILCAST_DHAIL5",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
+"gfs_dyn",   "hailcast_dhail_max",    "HAILCAST_DHAIL",    "fv3_history2d", "all", .false., "none", 2
+#"gfs_dyn",   "hailcast_dhail1_max",    "HAILCAST_DHAIL1",    "fv3_history2d", "all", .false., "none", 2
+#"gfs_dyn",   "hailcast_dhail2_max",    "HAILCAST_DHAIL2",    "fv3_history2d", "all", .false., "none", 2
+#"gfs_dyn",   "hailcast_dhail3_max",    "HAILCAST_DHAIL3",    "fv3_history2d", "all", .false., "none", 2
+#"gfs_dyn",   "hailcast_dhail4_max",    "HAILCAST_DHAIL4",    "fv3_history2d", "all", .false., "none", 2
+#"gfs_dyn",   "hailcast_dhail5_max",    "HAILCAST_DHAIL5",    "fv3_history2d", "all", .false., "none", 2
+
+#"hailcast_hour%4yr%2mo%2dy%2hr", 1, "hours", 1, "hours", "Time", 1 "hours"
+#"dynamics",   "hailcast_dhail1",    "HAILCAST_DHAIL1",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
+#"dynamics",   "hailcast_dhail2",    "HAILCAST_DHAIL2",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
+#"dynamics",   "hailcast_dhail3",    "HAILCAST_DHAIL3",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
+#"dynamics",   "hailcast_dhail4",    "HAILCAST_DHAIL4",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
+#"dynamics",   "hailcast_dhail5",    "HAILCAST_DHAIL5",    "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
 #"dynamics",   "hailcast_diam_mean", "HAILCAST_DIAM_MEAN", "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
 #"dynamics",   "hailcast_diam_std",  "HAILCAST_DIAM_STD",  "hailcast_hour%4yr%2mo%2dy%2hr", "all", max, "none", 2
 #=============================================================================================
