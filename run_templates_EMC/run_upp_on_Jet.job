@@ -2,10 +2,9 @@
 #SBATCH -A hpc-wof1
 #SBATCH --partition=xjet,ujet,vjet
 #SBATCH -J upp_HHHHHH
-#SBATCH -N NNNNNN -n NPES
-#SBATCH --ntasks-per-node=PPPPPP
+#SBATCH --nodes=NNNNNN --ntasks-per-node=PPPPPP --cpus-per-task=TTTTTT
 #SBATCH --exclusive
-#SBATCH -t 00:30:00
+#SBATCH -t 00:50:00
 #SBATCH -o WWWDDD/fv3sar_ccpp_%j.out
 #SBATCH -e WWWDDD/fv3sar_ccpp_%j.err
 
@@ -27,11 +26,13 @@ module load szip/2.1
 module load hdf5/1.8.9
 module load netcdf/4.2.1.1
 module load hdf4
-module load slurm
+#module load slurm
 
-export APRUN="srun -n 1"
+numprocess=$((PPPPPP*NNNNNN))
+export APRUN="srun -n $numprocess"
+export OMP_NUM_THREADS=TTTTTT
 
-UPPEXE=EEEEEE
+UPPEXE=EEEEEE/exec
 
 #-----------------------------------------------------------------------
 #
@@ -55,8 +56,6 @@ TITLE="fv3sar_$CDATE"
 #-----------------------------------------------------------------------
 
 cd WWWDDD
-
-export OMP_NUM_THREADS=4
 
 ${APRUN} ${UPPEXE}/ncep_post < itag
 

@@ -10,7 +10,9 @@ FV3SARDIR=${FV3SARDIR-$(pwd)}  #"/lfs3/projects/hpc-wof1/ywang/regional_fv3/fv3s
 #-----------------------------------------------------------------------
 #
 UPPFIX="${FV3SARDIR}/UPP_fix"
-UPPEXE="${FV3SARDIR}/exec"
+#UPPEXE="${FV3SARDIR}/exec"
+CRTM_FIX="${FV3SARDIR}/CRTM_v2.2.3_fix"
+ENDIAN="Big_Endian"
 
 hostname=$(hostname)
 case $hostname in
@@ -39,9 +41,11 @@ CDATE=$2
 
 sfhr=${3-0}
 
-nodes1="1"
-platppn="24"
-npes="24"
+nodes1="2"
+numprocess="6"
+numthread="4"
+platppn=$((numprocess/nodes1))
+#npes="24"
 
 #-----------------------------------------------------------------------
 #
@@ -115,10 +119,49 @@ EOF
 #
 #-----------------------------------------------------------------------
 
-  ln -s $UPPFIX/nam_micro_lookup.dat ./eta_micro_lookup.dat
+  ln -sf $UPPFIX/nam_micro_lookup.dat ./eta_micro_lookup.dat
   #ln -s $UPPFIX/postxconfig-NT-fv3sar.txt ./postxconfig-NT.txt
-  ln -s $UPPFIX/postxconfig-NT-fv3sar-hwt2019.txt ./postxconfig-NT.txt
-  ln -s $UPPFIX/params_grib2_tbl_new ./params_grib2_tbl_new
+  ln -sf $UPPFIX/postxconfig-NT-fv3sar-hwt2019.txt ./postxconfig-NT.txt
+  ln -sf $UPPFIX/params_grib2_tbl_new ./params_grib2_tbl_new
+
+#-----------------------------------------------------------------------
+#
+# CRTM fix files
+#
+#-----------------------------------------------------------------------
+
+  spcCoeff_files=(imgr_g15.SpcCoeff.bin imgr_g13.SpcCoeff.bin imgr_g12.SpcCoeff.bin imgr_g11.SpcCoeff.bin \
+    amsre_aqua.SpcCoeff.bin tmi_trmm.SpcCoeff.bin \
+    ssmi_f13.SpcCoeff.bin ssmi_f14.SpcCoeff.bin ssmi_f15.SpcCoeff.bin ssmis_f16.SpcCoeff.bin \
+    ssmis_f17.SpcCoeff.bin ssmis_f18.SpcCoeff.bin ssmis_f19.SpcCoeff.bin ssmis_f20.SpcCoeff.bin \
+    seviri_m10.SpcCoeff.bin imgr_mt2.SpcCoeff.bin imgr_mt1r.SpcCoeff.bin \
+    imgr_insat3d.SpcCoeff.bin abi_gr.SpcCoeff.bin abi_gr.SpcCoeff.bin )
+
+  for fn in ${spcCoeff_files[@]}; do
+    ln -sf ${CRTM_FIX}/SpcCoeff/${ENDIAN}/$fn .
+  done
+
+  tauCoeff_files=(imgr_g15.TauCoeff.bin imgr_g13.TauCoeff.bin imgr_g12.TauCoeff.bin imgr_g11.TauCoeff.bin \
+      amsre_aqua.TauCoeff.bin tmi_trmm.TauCoeff.bin \
+      ssmi_f13.TauCoeff.bin ssmi_f14.TauCoeff.bin ssmi_f15.TauCoeff.bin ssmis_f16.TauCoeff.bin \
+      ssmis_f17.TauCoeff.bin ssmis_f18.TauCoeff.bin ssmis_f19.TauCoeff.bin ssmis_f20.TauCoeff.bin \
+      seviri_m10.TauCoeff.bin imgr_mt2.TauCoeff.bin imgr_mt1r.TauCoeff.bin \
+      imgr_insat3d.TauCoeff.bin abi_gr.TauCoeff.bin abi_gr.TauCoeff.bin)
+
+  for fn in ${tauCoeff_files[@]}; do
+    ln -sf ${CRTM_FIX}/TauCoeff/ODPS/${ENDIAN}/$fn .
+  done
+
+  cloudAndAerosol_files=(CloudCoeff/${ENDIAN}/CloudCoeff.bin AerosolCoeff/${ENDIAN}/AerosolCoeff.bin \
+       EmisCoeff/IR_Land/SEcategory/${ENDIAN}/NPOESS.IRland.EmisCoeff.bin \
+       EmisCoeff/IR_Snow/SEcategory/${ENDIAN}/NPOESS.IRsnow.EmisCoeff.bin \
+       EmisCoeff/IR_Ice/SEcategory/${ENDIAN}/NPOESS.IRice.EmisCoeff.bin \
+       EmisCoeff/IR_Water/${ENDIAN}/Nalli.IRwater.EmisCoeff.bin \
+       EmisCoeff/MW_Water/${ENDIAN}/FASTEM6.MWwater.EmisCoeff.bin )
+
+  for fn in ${cloudAndAerosol_files[@]}; do
+    ln -sf ${CRTM_FIX}/$fn .
+  done
 
 #-----------------------------------------------------------------------
 #
@@ -128,7 +171,7 @@ EOF
 #-----------------------------------------------------------------------
   jobscript=run_upp_$fhr.job
   cp ${template_job} ${jobscript}
-  sed -i -e "s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#NPES#${npes}#g;s#EEEEEE#${UPPEXE}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;" ${jobscript}
+  sed -i -e "s#WWWDDD#${FHR_DIR}#;s#NNNNNN#${nodes1}#;s#PPPPPP#${platppn}#g;s#TTTTTT#${numthread}#g;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;" ${jobscript}
 
   sbatch $jobscript
 
