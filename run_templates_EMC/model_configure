@@ -10,24 +10,34 @@ start_second:            0
 nhours_fcst:             60
 RUN_CONTINUE:            .false.
 ENS_SPS:                 .false.
-dt_atmos:                40
+dt_atmos:                36
 cpl:                     .false.
 calendar:                'julian'
 memuse_verbose:          .false.
 atmos_nthreads:          2
 use_hyper_thread:        .false.
-ncores_per_node:         24
-restart_interval:        0
+ncores_per_node:         24 
+debug_affinity:          .true.
+restart_interval:        12
+output_1st_tstep_rst:    .false.
 
 quilting:                .true.
-output_1st_tstep_rst:    .false.
 write_groups:            NODES2
 write_tasks_per_group:   PPN2
+write_dopost:            .false.
+output_history:          .true.
 num_files:               2
 filename_base:           'dyn' 'phy'
-output_file:             'netcdf'
+output_file:             'netcdf' 'netcdf'
 write_nemsioflip:        .false.
 write_fsyncflag:         .false.
+ideflate:		 1
+nbits:			 18
+ichunk2d:                -1
+jchunk2d:                -1
+ichunk3d:                -1
+jchunk3d:                -1
+kchunk3d:                -1
 
 output_grid: 'lambert_conformal'
 cen_lon:     -97.5
@@ -45,3 +55,4 @@ nfhout:                  1
 nfhmax_hf:               60
 nfhout_hf:               1
 nsout:                   -1
+

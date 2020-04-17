@@ -1,0 +1,198 @@
+#!/bin/sh
+#SBATCH -A hpc-wof1
+#SBATCH --partition=xjet
+#SBATCH -J bufr_HHHHHH
+#SBATCH --nodes=NNNNNN --ntasks-per-node=PPPPPP
+#SBATCH --exclusive
+#SBATCH -t 01:30:00
+#SBATCH -o WWWDDD/fv3sar_bufr_%j.out
+#SBATCH -e WWWDDD/fv3sar_bufr_%j.err
+
+time1=$(date '+%s')
+echo "Job Started: $(date). Job Id:  $SLURM_JOBID"
+echo " "
+
+#-----------------------------------------------------------------------
+#
+# Load modules.
+#
+#-----------------------------------------------------------------------
+#
+module purge
+
+module use EEEEEE/modulefiles
+module load v8.0.0-jet
+
+#####!/bin/ksh
+######################################################################
+####  UNIX Script Documentation Block
+#                      .                                             .
+# Script name:         exhireswfv3_bufr.sh
+# Script description:  Trigger sounding post job
+#
+# Author:        Eric Rogers       Org: NP22         Date: 1999-06-23
+#
+# Abstract: This script triggers the sounding post job, which
+#           creates a piece of the model sounding profile whose
+#           time interval is determined by the input forecast hours.
+#
+# Script history log:
+# 2000-05-16  Eric Rogers
+# 2006-01-20  Eric Rogers -- extended to 84-h and modified for WRF-NMM NAM
+# 2009-12-18  Matthew Pyle -- shortened to 48-h and generalized for multiple domains
+#                             and diferent dynamical cores
+# 2019-10-28  Matthew Pyle -- Converted for FV3 SAR and 60 hours
+#
+
+dom="conus"
+
+DATA=$(dirname WWWDDD)
+cyc="00"
+INPUT_DATA=$(dirname $DATA)
+
+FHRLIM=60
+
+STARTDATE=$(date -d "DDDDDD $cyc:00" +%Y-%m-%d_%H:%M:%S)
+FINALDATE=$(date -d "DDDDDD 00:00 $FHRLIM hours" +%Y-%m-%d_%H:%M:%S)
+
+#set -x
+
+NEST=${dom}
+MODEL=fv3
+
+#mkdir -p $DATA/postbufr
+cd $DATA
+
+RUNLOC=${NEST}${MODEL}
+
+numprocess=$((PPPPPP*NNNNNN))
+APRUN="srun -n $numprocess"
+EXECfv3="EEEEEE/exec"
+PARMfv3="EEEEEE/run_templates_EMC"
+COMOUT="${DATA}"
+
+export tmmark=tm00
+
+OUTTYP=netcdf
+
+model=FV3S
+
+INCR=01
+FHRLIM=60
+
+let NFILE=1
+
+#YYYY=`echo $PDY | cut -c1-4`
+#MM=`echo $PDY | cut -c5-6`
+#DD=`echo $PDY | cut -c7-8`
+#CYCLE=$PDY$cyc
+#
+#startd=$YYYY$MM$DD
+#startdate=$CYCLE
+#
+##endtime=`$NDATE $FHRLIM $CYCLE`
+#
+#STARTDATE=${YYYY}-${MM}-${DD}_${cyc}:00:00
+#
+#YYYY=`echo $endtime | cut -c1-4`
+#MM=`echo $endtime | cut -c5-6`
+#DD=`echo $endtime | cut -c7-8`
+#
+#FINALDATE=${YYYY}-${MM}-${DD}_${cyc}:00:00
+
+# check for existence of sndpostdone files
+
+#cd $DATA
+
+#if [ -e sndpostdone00.tm00 ]
+#then
+#
+#lasthour=`ls -1rt sndpostdone??.tm00 | tail -1 | cut -c 12-13`
+#typeset -Z2 lasthour
+#
+#let "fhr=lasthour+1"
+#typeset -Z2 fhr
+#
+#else
+
+fhr=HHHHHH
+
+#fi
+
+echo starting with fhr $fhr
+
+#cd $DATA/postbufr
+
+########################################################
+
+#while [ $fhr -le $FHRLIM ]
+#do
+
+fhrstr=$(printf "%03d" $fhr)
+
+datadir=${DATA}/${fhrstr}
+mkdir -p $datadir
+
+cd $datadir
+
+#date=`$NDATE $fhr $CYCLE`
+
+#let fhrold="$fhr - 1"
+
+OUTFILDYN=$INPUT_DATA/dynf${fhrstr}.nc
+OUTFILPHYS=$INPUT_DATA/phyf${fhrstr}.nc
+
+icnt=1
+# wait for model log file
+while [ $icnt -lt 1000 ]
+do
+   if [ -s $INPUT_DATA/logf${fhrstr} ]
+   then
+      break
+   else
+      icnt=$((icnt + 1))
+      echo "waiting for $INPUT_DATA/logf${fhrstr} ......"
+      sleep 9
+   fi
+   if [ $icnt -ge 1000 ]
+   then
+       msg="FATAL ERROR: ABORTING after 30 minutes of waiting for FV3S ${RUNLOC} FCST F${fhr} to end."
+       #err_exit $msg
+       exit 1
+   fi
+done
+
+
+datestr=`date`
+echo top of loop after found needed log file for $fhr at $datestr
+
+cat > itag <<EOF
+$OUTFILDYN
+$OUTFILPHYS
+$model
+$OUTTYP
+$STARTDATE
+$NFILE
+$INCR
+$fhr
+$OUTFILDYN
+$OUTFILPHYS
+EOF
+
+export pgm=hireswfv3_bufr.x
+
+#. prep_step
+
+export FORT19="$DATA/hiresw_profdat"
+export FORT79="$datadir/profilm.c1.${tmmark}.f${fhrstr}"
+export FORT11="itag"
+
+#startmsg
+echo ${APRUNC} $EXECfv3/hireswfv3_bufr.x
+${APRUNC} $EXECfv3/hireswfv3_bufr.x  > pgmout.log_${fhrstr} 2>&1
+#export err=$?;err_chk
+
+echo DONE $fhr at `date`
+
+#mv $datadir/profilm.c1.${tmmark} $datadir/profilm.c1.${tmmark}.f${fhr}
+echo "done" > $DATA/sndpostdone${fhrstr}.${tmmark}

@@ -42,10 +42,26 @@ CDATE=$2
 sfhr=${3-0}
 
 nodes1="2"
-numprocess="6"
+numprocess="12"
 numthread="4"
 platppn=$((numprocess/nodes1))
 #npes="24"
+
+#
+# Configuration for Bufr
+#
+nodesb="3"
+numprocess="72"
+platppnb=$((numprocess/nodesb))
+
+POSTBUFR_DIR="$RUNDIR/postbufr"
+if [[ ! -r ${POSTBUFR_DIR} ]]; then
+  mkdir -p ${POSTBUFR_DIR}
+fi
+
+cd $POSTBUFR_DIR
+cp ${FV3SARDIR}/run_fix/hiresw_conusfv3_profdat hiresw_profdat
+bufrtmpl=${FV3SARDIR}/run_templates_EMC/exhiresw_bufr000.job
 
 #-----------------------------------------------------------------------
 #
@@ -63,18 +79,25 @@ for hr in $(seq $sfhr 1 60); do
   dyn_file=${RUNDIR}/dynf${fhr}.nc
   phy_file=${RUNDIR}/phyf${fhr}.nc
 
+  log_file=${RUNDIR}/logf${fhr}
+
   wtime=0
-  while [[ ! -f ${dyn_file} ]]; do
+  while [[ ! -f ${log_file} ]]; do
     sleep 20
     wtime=$(( wtime += 20 ))
-    echo "Waiting ($wtime seconds) for ${dyn_file}"
+    echo "Waiting ($wtime seconds) for ${log_file}"
   done
-
-  while [[ ! -f ${phy_file} ]]; do
-    sleep 10
-    wtime=$(( wtime += 10 ))
-    echo "Waiting ($wtime seconds) for ${phy_file}"
-  done
+  #while [[ ! -f ${dyn_file} ]]; do
+  #  sleep 20
+  #  wtime=$(( wtime += 20 ))
+  #  echo "Waiting ($wtime seconds) for ${dyn_file}"
+  #done
+  #
+  #while [[ ! -f ${phy_file} ]]; do
+  #  sleep 10
+  #  wtime=$(( wtime += 10 ))
+  #  echo "Waiting ($wtime seconds) for ${phy_file}"
+  #done
 
   FHR_DIR="${POSTPRD_DIR}/$fhr"
   if [[ ! -r ${FHR_DIR} ]]; then
@@ -175,7 +198,43 @@ EOF
 
   sbatch $jobscript
 
+#-----------------------------------------------------------------------
+#
+# Run postbufr
+#
+#-----------------------------------------------------------------------
+
+  FHR_DIR="${POSTBUFR_DIR}/$fhr"
+  if [[ ! -r ${FHR_DIR} ]]; then
+    mkdir -p ${FHR_DIR}
+  fi
+
+  cd ${FHR_DIR}
+
+  jobscript=${FHR_DIR}/exhiresw_bufr${fhr}.job
+
+  sed -e "s#WWWDDD#$FHR_DIR#;s#NNNNNN#${nodesb}#;s#PPPPPP#${platppnb}#g;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;" ${bufrtmpl} > ${jobscript}
+
+  echo "Submitting $jobscript ..."
+  sbatch $jobscript
 done
 
-exit
+cd $POSTBUFR_DIR
+hr=61
+bufrtmpl=${FV3SARDIR}/run_templates_EMC/exhiresw_bufr0${hr}.job
+jobscript=$POSTBUFR_DIR/exhiresw_bufr0${hr}.job
+sed -e "s#WWWDDD#${POSTBUFR_DIR}#;s#NNNNNN#${nodesb}#;s#PPPPPP#${platppnb}#g;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;" ${bufrtmpl} > ${jobscript}
+
+donefile=$POSTBUFR_DIR/sndpostdone060.tm00
+wtime=0
+while [[ ! -f ${donefile} ]]; do
+  sleep 20
+  wtime=$(( wtime += 10 ))
+  echo "Waiting ($wtime seconds) for ${donefile}"
+done
+
+echo "Submitting $jobscript ..."
+sbatch $jobscript
+
+exit 0
 

@@ -194,7 +194,8 @@ if [ ! -f $donefv3 ]; then
   cp ${template_dir}/model_configure .
   cp ${template_dir}/nems.configure .
   #ln -s ${template_dir}/suite_FV3_GSD.xml ccpp_suite.xml
-  cp ${template_dir}/suite_FV3_GFS_2017_thompson_mynn.xml .
+  #cp ${template_dir}/suite_FV3_GFS_2017_thompson_mynn.xml .
+  cp ${template_dir}/suite_FV3_GFS_v15_thompson_mynn.xml .
   ln -s ${template_dir}/CCN_ACTIVATE.BIN .
 
   runfix_dir="${rootdir}/fv3sar.mine/run_fix"
@@ -208,6 +209,10 @@ if [ ! -f $donefv3 ]; then
   ln -s ${runfix_dir}/sfc_emissivity_idx.txt .
   ln -s ${runfix_dir}/co2* .
   ln -s ${runfix_dir}/global_* .
+  rm global_o3prdlos.f77
+  ln -s ${runfix_dir}/ozprdlos_2015_new_sbuvO3_tclm15_nuchem.f77 global_o3prdlos.f77
+  rm global_soilmgldas.t126.384.190.grb
+  ln -s ${runfix_dir}/fix.C768/global_soilmgldas.t1534.3072.1536.grb .
 
 
   ymd=`echo ${eventdate} |cut -c 1-8`
@@ -231,7 +236,7 @@ fi
 
 echo "-- 3: run FV3SAR at $(date +%m-%d_%H:%M:%S) ----"
 
-EXEPRO="$rootdir/fv3sar.mine/exec/fv3_32bit.exe"
+EXEPRO="$rootdir/fv3sar.mine/exec/fv3_GFSL81_HAIL.exe"
 
 if [ ! -f $donefv3 ]; then
   #echo "Waiting for ${chgresfile} ..."

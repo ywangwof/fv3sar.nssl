@@ -1,12 +1,12 @@
 #!/bin/sh -l
 #SBATCH -A hpc-wof1
-#SBATCH --partition=xjet,ujet,vjet
+#SBATCH --partition=xjet
 #SBATCH -J upp_HHHHHH
 #SBATCH --nodes=NNNNNN --ntasks-per-node=PPPPPP --cpus-per-task=TTTTTT
 #SBATCH --exclusive
-#SBATCH -t 00:50:00
-#SBATCH -o WWWDDD/fv3sar_ccpp_%j.out
-#SBATCH -e WWWDDD/fv3sar_ccpp_%j.err
+#SBATCH -t 01:20:00
+#SBATCH -o WWWDDD/fv3sar_upp_%j.out
+#SBATCH -e WWWDDD/fv3sar_upp_%j.err
 
 time1=$(date '+%s')
 echo "Job Started: $(date). Job Id:  $SLURM_JOBID"
@@ -20,13 +20,9 @@ echo " "
 #
 
 module purge
-module load intel/18.0.5.274
-module load impi/2018.4.274
-module load szip/2.1
-module load hdf5/1.8.9
-module load netcdf/4.2.1.1
-module load hdf4
-#module load slurm
+
+module use EEEEEE/modulefiles
+module load v8.0.0-jet
 
 numprocess=$((PPPPPP*NNNNNN))
 export APRUN="srun -n $numprocess"
