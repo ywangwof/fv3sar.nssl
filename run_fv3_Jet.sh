@@ -196,7 +196,6 @@ if [ ! -f $donefv3 ]; then
   #ln -s ${template_dir}/suite_FV3_GSD.xml ccpp_suite.xml
   #cp ${template_dir}/suite_FV3_GFS_2017_thompson_mynn.xml .
   cp ${template_dir}/suite_FV3_GFS_v15_thompson_mynn.xml .
-  ln -s ${template_dir}/CCN_ACTIVATE.BIN .
 
   runfix_dir="${rootdir}/fv3sar.mine/run_fix"
   #ln -s ${runfix_dir}/global_o3prdlos.f77 .
@@ -213,6 +212,7 @@ if [ ! -f $donefv3 ]; then
   ln -s ${runfix_dir}/ozprdlos_2015_new_sbuvO3_tclm15_nuchem.f77 global_o3prdlos.f77
   rm global_soilmgldas.t126.384.190.grb
   ln -s ${runfix_dir}/fix.C768/global_soilmgldas.t1534.3072.1536.grb .
+  ln -s ${runfix_dir}/CCN_ACTIVATE.BIN .
 
 
   ymd=`echo ${eventdate} |cut -c 1-8`
