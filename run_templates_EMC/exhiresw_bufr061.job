@@ -51,7 +51,7 @@ FIXsar=EEEEEE/run_fix
 cyc=00
 INPUT_DATA=$(dirname $DATA)
 
-FHRLIM=60
+FHRLIM=HHHTOP
 
 STARTDATE=$(date -d "DDDDDD $cyc:00" +%Y-%m-%d_%H:%M:%S)
 FINALDATE=$(date -d "DDDDDD 00:00 $FHRLIM hours" +%Y-%m-%d_%H:%M:%S)
@@ -85,7 +85,6 @@ OUTTYP=netcdf
 model=FV3S
 
 INCR=01
-FHRLIM=60
 
 let NFILE=1
 
@@ -163,22 +162,24 @@ fi
 
 fhr=0
 
+cd ${DATA}
+
 while [ $fhr -le $FHRLIM ]
 do
 
 fhrstr=$(printf "%03d" $fhr)
-
 datadir=${DATA}/${fhrstr}
-
-cd $datadir
 
 echo "Copying $fhrstr ..."
 
-if [[ -f $DATA/profilm.c1.${tmmark} ]]; then
+if [[ $fhr -eq 0 ]]; then
+  if [[ -f $DATA/profilm.c1.${tmmark} ]]; then
+    rm -rf $DATA/profilm.c1.${tmmark}
+  fi
+  cat $datadir/profilm.c1.${tmmark}.f${fhrstr} > $DATA/profilm.c1.${tmmark}
+else
   cat $DATA/profilm.c1.${tmmark}  $datadir/profilm.c1.${tmmark}.f${fhrstr} > $DATA/profilm_int
   mv $DATA/profilm_int $DATA/profilm.c1.${tmmark}
-else
-  cat $datadir/profilm.c1.${tmmark}.f${fhrstr} > $DATA/profilm.c1.${tmmark}
 fi
 
 fhr=`expr $fhr + $INCR`
@@ -187,11 +188,10 @@ fhr=`expr $fhr + $INCR`
 
 done
 
-cd $DATA
-
 ########################################################
 ############### SNDP code
 ########################################################
+cd $DATA
 
 export pgm=hiresw_sndp_${RUNLOC}
 
@@ -213,85 +213,85 @@ echo here model $model
 
 nlev=81
 
-pgmout=hireswfv3_sndp.log
+#pgmout=hireswfv3_sndp.log
 echo "${model} $nlev" > itag
-${APRUNS} $EXECfv3/hireswfv3_sndp.x  < itag > $pgmout 2>&1
+${APRUNS} $EXECfv3/hireswfv3_sndp.x  < itag
 echo "$EXECfv3/hireswfv3_sndp.x  < itag"
 echo "   > return $?"
 #export err=$?;err_chk
 
-################ Convert BUFR output into format directly readable by GEMPAK namsnd on WCOSS
-#
-##echo USHobsproc_shared_bufr_cword is ${USHobsproc_shared_bufr_cword}
-##${USHobsproc_shared_bufr_cword}/bufr_cword.sh unblk class1.bufr class1.bufr.unb
-##${USHobsproc_shared_bufr_cword}/bufr_cword.sh block class1.bufr.unb class1.bufr.wcoss
-#
-##if [ $SENDCOM == "YES" ]
-##then
-##cp $DATA/class1.bufr $COMOUT/${RUN}.t${cyc}z.${RUNLOC}.class1.bufr
-##cp $DATA/class1.bufr.wcoss $COMOUT/${RUN}.t${cyc}z.${RUNLOC}.class1.bufr.wcoss
-##cp $DATA/profilm.c1.${tmmark} ${COMOUT}/${RUN}.t${cyc}z.${RUNLOC}.profilm.c1
-##fi
-#
-## remove bufr file breakout directory in $COMOUT if it exists
-#
-#if [ -d ${COMOUT}/bufr.${NEST}${MODEL}${cyc} ]
+############### Convert BUFR output into format directly readable by GEMPAK namsnd on WCOSS
+
+#echo USHobsproc_shared_bufr_cword is ${USHobsproc_shared_bufr_cword}
+#${USHobsproc_shared_bufr_cword}/bufr_cword.sh unblk class1.bufr class1.bufr.unb
+#${USHobsproc_shared_bufr_cword}/bufr_cword.sh block class1.bufr.unb class1.bufr.wcoss
+
+#if [ $SENDCOM == "YES" ]
 #then
-#  cd $COMOUT
-#  rm -r bufr.${NEST}${MODEL}${cyc}
-#  cd $DATA
+#cp $DATA/class1.bufr $COMOUT/${RUN}.t${cyc}z.${RUNLOC}.class1.bufr
+#cp $DATA/class1.bufr.wcoss $COMOUT/${RUN}.t${cyc}z.${RUNLOC}.class1.bufr.wcoss
+#cp $DATA/profilm.c1.${tmmark} ${COMOUT}/${RUN}.t${cyc}z.${RUNLOC}.profilm.c1
 #fi
-#
-#rm stnmlist_input
-#
-#cat <<EOF > stnmlist_input
-#1
-#$DATA/fv3sar_DDDDDD.t${cyc}z.bufr
-#${COMOUT}/bufr.${NEST}${MODEL}${cyc}/${NEST}${MODEL}bufr
-#EOF
-#
-#mkdir -p ${COMOUT}/bufr.${NEST}${MODEL}${cyc}
-#
-#export pgm=hireswfv3_stnmlist
-##. prep_step
-#
-#export FORT20=$datadir/class1.bufr
-#export DIRD=${COMOUT}/bufr.${NEST}${MODEL}${cyc}/${NEST}${MODEL}bufr
-#
-##startmsg
+
+# remove bufr file breakout directory in $COMOUT if it exists
+
+if [ -d ${COMOUT}/bufr.${NEST}${MODEL}${cyc} ]
+then
+  cd $COMOUT
+  rm -r bufr.${NEST}${MODEL}${cyc}
+  cd $DATA
+fi
+
+rm stnmlist_input
+
+cat <<EOF > stnmlist_input
+1
+$DATA/fv3sar_DDDDDD.t${cyc}z.bufr
+${COMOUT}/bufr.${NEST}${MODEL}${cyc}/${NEST}${MODEL}bufr
+EOF
+
+mkdir -p ${COMOUT}/bufr.${NEST}${MODEL}${cyc}
+
+export pgm=hireswfv3_stnmlist
+#. prep_step
+
+export FORT20=$datadir/class1.bufr
+export DIRD=${COMOUT}/bufr.${NEST}${MODEL}${cyc}/${NEST}${MODEL}bufr
+
+#startmsg
 #pgmout=hireswfv3_stnmlist.log
-#${APRUNS}  $EXECfv3/hireswfv3_stnmlist.x < stnmlist_input >> $pgmout 2>&1
-#echo "$EXECfv3/hireswfv3_stnmlist.x  < stnmlist_input"
-#echo "   > return $?"
-#  #export err=$?;err_chk
-#
-#echo ${COMOUT}/bufr.${NEST}${MODEL}${cyc} > ${COMOUT}/bufr.${NEST}${MODEL}${cyc}/bufrloc
-#
-##   cp class1.bufr.tm00 $COMOUT/${RUN}.${cyc}.class1.bufr
-#
-#cd ${COMOUT}/bufr.${NEST}${MODEL}${cyc}
-#
-## Tar and gzip the individual bufr files and send them to /com
-#tar -cf - . | /usr/bin/gzip > ../${RUN}.t${cyc}z.${RUNLOC}.bufrsnd.tar.gz
-#
-##files=`ls`
-##for fl in $files
-##do
-##${USHobsproc_shared_bufr_cword}/bufr_cword.sh unblk ${fl} ${fl}.unb
-##${USHobsproc_shared_bufr_cword}/bufr_cword.sh block ${fl}.unb ${fl}.wcoss
-##rm ${fl}.unb
-##done
-#
-#
-## Make an upper case version of the ${RUNLOC} variable for the alert
-##export DBN_NEST=`echo ${RUNLOC} | tr '[a-z]' '[A-Z]'`
-#
-##if [ $SENDDBN == "YES" ]
-##then
-##  $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job $COMOUT/${RUN}.t${cyc}z.${RUNLOC}.class1.bufr
-##  $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE}_TAR $job $COMOUT/${RUN}.t${cyc}z.${RUNLOC}.bufrsnd.tar.gz
-##fi
+${APRUNS}  $EXECfv3/hireswfv3_stnmlist.x < stnmlist_input
+echo "$EXECfv3/hireswfv3_stnmlist.x  < stnmlist_input"
+echo "   > return $?"
+  #export err=$?;err_chk
+
+echo ${COMOUT}/bufr.${NEST}${MODEL}${cyc} > ${COMOUT}/bufr.${NEST}${MODEL}${cyc}/bufrloc
+
+#   cp class1.bufr.tm00 $COMOUT/${RUN}.${cyc}.class1.bufr
+
+cd ${COMOUT}/bufr.${NEST}${MODEL}${cyc}
+
+# Tar and gzip the individual bufr files and send them to /com
+tar -czvf ../fv3sar_DDDDDD.t${cyc}z.bufrsnd.tar.gz *
+
+#files=`ls`
+#for fl in $files
+#do
+#${USHobsproc_shared_bufr_cword}/bufr_cword.sh unblk ${fl} ${fl}.unb
+#${USHobsproc_shared_bufr_cword}/bufr_cword.sh block ${fl}.unb ${fl}.wcoss
+#rm ${fl}.unb
+#done
+
+
+# Make an upper case version of the ${RUNLOC} variable for the alert
+#export DBN_NEST=`echo ${RUNLOC} | tr '[a-z]' '[A-Z]'`
+
+#if [ $SENDDBN == "YES" ]
+#then
+#  $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE} $job $COMOUT/${RUN}.t${cyc}z.${RUNLOC}.class1.bufr
+#  $DBNROOT/bin/dbn_alert MODEL ${DBN_ALERT_TYPE}_TAR $job $COMOUT/${RUN}.t${cyc}z.${RUNLOC}.bufrsnd.tar.gz
+#fi
 
 echo "Done hireswfv3_stnmlist.x & hireswfv3_stnmlist.x"
-#echo EXITING $0 with return code $err
-#exit $err
+echo EXITING $0 with return code $err
+exit $err

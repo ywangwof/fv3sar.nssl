@@ -50,7 +50,7 @@ DATA=$(dirname WWWDDD)
 cyc="00"
 INPUT_DATA=$(dirname $DATA)
 
-FHRLIM=60
+FHRLIM=HHHTOP
 
 STARTDATE=$(date -d "DDDDDD $cyc:00" +%Y-%m-%d_%H:%M:%S)
 FINALDATE=$(date -d "DDDDDD 00:00 $FHRLIM hours" +%Y-%m-%d_%H:%M:%S)

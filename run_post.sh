@@ -40,6 +40,7 @@ RUNDIR=$1      # $eventdir
 CDATE=$2
 
 sfhr=${3-0}
+tophour=${4-60}
 
 nodes1="2"
 numprocess="12"
@@ -73,7 +74,7 @@ bufrtmpl=${FV3SARDIR}/run_templates_EMC/exhiresw_bufr000.job
 #-----------------------------------------------------------------------
 POSTPRD_DIR="$RUNDIR/postprd"
 
-for hr in $(seq $sfhr 1 60); do
+for hr in $(seq $sfhr 1 ${tophour}); do
   fhr=$(printf "%03d" $hr)
 
   dyn_file=${RUNDIR}/dynf${fhr}.nc
@@ -213,19 +214,20 @@ EOF
 
   jobscript=${FHR_DIR}/exhiresw_bufr${fhr}.job
 
-  sed -e "s#WWWDDD#$FHR_DIR#;s#NNNNNN#${nodesb}#;s#PPPPPP#${platppnb}#g;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;" ${bufrtmpl} > ${jobscript}
+  sed -e "s#WWWDDD#$FHR_DIR#;s#NNNNNN#${nodesb}#;s#PPPPPP#${platppnb}#g;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;s#HHHTOP#${tophour}#;" ${bufrtmpl} > ${jobscript}
 
   echo "Submitting $jobscript ..."
   sbatch $jobscript
 done
 
 cd $POSTBUFR_DIR
-hr=61
-bufrtmpl=${FV3SARDIR}/run_templates_EMC/exhiresw_bufr0${hr}.job
+hr=$((tophour+1))
+bufrtmpl=${FV3SARDIR}/run_templates_EMC/exhiresw_bufr061.job
 jobscript=$POSTBUFR_DIR/exhiresw_bufr0${hr}.job
-sed -e "s#WWWDDD#${POSTBUFR_DIR}#;s#NNNNNN#${nodesb}#;s#PPPPPP#${platppnb}#g;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;" ${bufrtmpl} > ${jobscript}
+sed -e "s#WWWDDD#${POSTBUFR_DIR}#;s#NNNNNN#${nodesb}#;s#PPPPPP#${platppnb}#g;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;s#HHHTOP#${tophour}#;" ${bufrtmpl} > ${jobscript}
 
-donefile=$POSTBUFR_DIR/sndpostdone060.tm00
+echo "tophour=$tophour"
+donefile=$POSTBUFR_DIR/sndpostdone0${tophour}.tm00
 wtime=0
 while [[ ! -f ${donefile} ]]; do
   sleep 20
