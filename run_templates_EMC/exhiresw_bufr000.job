@@ -66,7 +66,7 @@ cd $DATA
 RUNLOC=${NEST}${MODEL}
 
 numprocess=$((PPPPPP*NNNNNN))
-APRUN="srun -n $numprocess"
+APRUNC="srun -n $numprocess"
 EXECfv3="EEEEEE/exec"
 PARMfv3="EEEEEE/run_templates_EMC"
 COMOUT="${DATA}"

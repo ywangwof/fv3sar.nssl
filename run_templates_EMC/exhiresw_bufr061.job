@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH -A hpc-wof1
 #SBATCH --partition=xjet
-#SBATCH -J bufr_0061
-#SBATCH --nodes=NNNNNN --ntasks-per-node=PPPPPP
+#SBATCH -J bufr_STNM
+#SBATCH --nodes=1 --ntasks-per-node=24
 #SBATCH --exclusive
 #SBATCH -t 02:20:00
 #SBATCH -o WWWDDD/fv3sar_bufr_%j.out
@@ -61,13 +61,19 @@ FINALDATE=$(date -d "DDDDDD 00:00 $FHRLIM hours" +%Y-%m-%d_%H:%M:%S)
 NEST=${dom}
 MODEL=fv3
 
+if [[ WWWDDD =~ "UKM" ]]; then
+  TITLE="fv3ukm"
+else
+  TITLE="fv3sar"
+fi
+
 #mkdir -p $DATA/postbufr
 cd $DATA
 
 RUNLOC=${NEST}${MODEL}
 
-numprocess=$((PPPPPP*NNNNNN))
-APRUN="srun -n $numprocess"
+#numprocess=$((PPPPPP*NNNNNN))
+#APRUNS="srun -n $numprocess"
 EXECfv3="EEEEEE/exec"
 PARMfv3="EEEEEE/run_templates_EMC"
 COMOUT="${DATA}"
@@ -203,7 +209,7 @@ cp $PARMfv3/hiresw_bufr.tbl $DATA/hiresw_bufr.tbl
 export FORT11="$DATA/hiresw_sndp.parm.mono"
 export FORT32="$DATA/hiresw_bufr.tbl"
 export FORT66="$DATA/profilm.c1.${tmmark}"
-export FORT78="$DATA/fv3sar_DDDDDD.t${cyc}z.bufr"
+export FORT78="$DATA/${TITLE}_DDDDDD.t${cyc}z.bufr"
 
 #startmsg
 
@@ -246,7 +252,7 @@ rm stnmlist_input
 
 cat <<EOF > stnmlist_input
 1
-$DATA/fv3sar_DDDDDD.t${cyc}z.bufr
+$DATA/${TITLE}_DDDDDD.t${cyc}z.bufr
 ${COMOUT}/bufr.${NEST}${MODEL}${cyc}/${NEST}${MODEL}bufr
 EOF
 
@@ -272,7 +278,7 @@ echo ${COMOUT}/bufr.${NEST}${MODEL}${cyc} > ${COMOUT}/bufr.${NEST}${MODEL}${cyc}
 cd ${COMOUT}/bufr.${NEST}${MODEL}${cyc}
 
 # Tar and gzip the individual bufr files and send them to /com
-tar -czvf ../fv3sar_DDDDDD.t${cyc}z.bufrsnd.tar.gz *
+tar -czvf ../${TITLE}_DDDDDD.t${cyc}z.bufrsnd.tar.gz *
 
 #files=`ls`
 #for fl in $files

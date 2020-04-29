@@ -224,10 +224,11 @@ cd $POSTBUFR_DIR
 hr=$((tophour+1))
 bufrtmpl=${FV3SARDIR}/run_templates_EMC/exhiresw_bufr061.job
 jobscript=$POSTBUFR_DIR/exhiresw_bufr0${hr}.job
-sed -e "s#WWWDDD#${POSTBUFR_DIR}#;s#NNNNNN#${nodesb}#;s#PPPPPP#${platppnb}#g;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;s#HHHTOP#${tophour}#;" ${bufrtmpl} > ${jobscript}
+sed -e "s#WWWDDD#${POSTBUFR_DIR}#;s#EEEEEE#${FV3SARDIR}#;s#DDDDDD#${CDATE}#;s#HHHHHH#${hr}#;s#HHHTOP#${tophour}#;" ${bufrtmpl} > ${jobscript}
 
 echo "tophour=$tophour"
-donefile=$POSTBUFR_DIR/sndpostdone0${tophour}.tm00
+fhr=$(printf "%03d" $tophour)
+donefile=$POSTBUFR_DIR/sndpostdone${fhr}.tm00
 wtime=0
 while [[ ! -f ${donefile} ]]; do
   sleep 20
